@@ -1,0 +1,1429 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>RS Ultimate Toolkit</title>
+    <link rel="stylesheet" href="css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <script src="js/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #050505;
+            --bg-card: #0a0a0a;
+            --bg-panel: #0a0a0a;
+            --bg-input: #0f0f0f;
+            --border: #333;
+            --primary: #00E5FF;
+            --accent: #ff0055;
+            --success: #00ff9d;
+            --warning: #ffd700;
+            --text-main: #fff;
+            --text-muted: #666;
+            --radius: 6px;
+            --font-main: 'Segoe UI', system-ui, sans-serif;
+            --font-tech: 'JetBrains Mono', monospace;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html, body {
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            font-family: var(--font-main);
+            height: 100%; width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            display: flex; 
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .app-header {
+            flex-shrink: 0; 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: calc(15px + var(--safe-top)) 20px 15px 20px; 
+            background: var(--bg-card); 
+            border-bottom: 1px solid var(--border); 
+            z-index: 50;
+        }
+
+        .logo { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--primary); }
+
+        .main-nav { display: flex; gap: 5px; background: #111; padding: 4px; border-radius: 6px; border: 1px solid var(--border); }
+        .nav-btn {
+            padding: 8px 16px; background: transparent; border: none; color: var(--text-muted); cursor: pointer;
+            border-radius: 4px; font-size: 0.8rem; font-weight: 700; font-family: var(--font-tech); transition: 0.2s;
+        }
+        .nav-btn:hover { color: #fff; }
+        .nav-btn.active { background: var(--primary); color: #000; box-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
+
+        /* --- CONTENT AREA --- */
+        .app-content {
+            flex: 1; 
+            position: relative; 
+            width: 100%; 
+            overflow: hidden;
+        }
+
+        .view-section {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            display: none;
+            background: var(--bg-body);
+        }
+        .view-section.active { display: block; }
+
+        /* --- VAULT VIEW --- */
+        #view-vault {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .vault-inner {
+            padding: 20px;
+            padding-bottom: calc(40px + var(--safe-bottom)); 
+            max-width: 1400px; margin: 0 auto;
+        }
+
+        /* --- NOTE LAYOUT STYLES (FIXED) --- */
+        .note-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255, 215, 0, 0.1); color: var(--warning);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 4px; padding: 2px 8px; margin-left: 8px;
+            font-size: 0.7rem; font-weight: bold; cursor: pointer;
+            transition: 0.2s; letter-spacing: 0.5px;
+        }
+        .note-badge:hover { background: rgba(255, 215, 0, 0.2); border-color: var(--warning); transform: translateY(-1px); }
+        
+        .note-viewer-body {
+            background: #080808; 
+            border: 1px solid #333; 
+            padding: 20px; 
+            border-radius: 6px; 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.85rem; 
+            color: #ddd; 
+            
+            /* Crucial fixes for layout */
+            white-space: pre-wrap;       /* Preserves newlines and spaces */
+            word-wrap: break-word;       /* Breaks long words safely */
+            overflow-wrap: break-word;   /* Standard property */
+            
+            max-height: 50vh; 
+            overflow-y: auto; 
+            line-height: 1.6;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #080808;
+        }
+
+        /* Edit Mode Textarea Styling */
+        #entryNotes {
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.8rem;
+            background: #080808; 
+            border-color: #333; 
+            color: #ccc;
+            line-height: 1.4;
+        }
+        #entryNotes:focus { border-color: var(--primary); color: #fff; }
+
+        /* --- BIO BUILDER VIEW --- */
+        #view-bio.active { display: flex; }
+        
+        .editor-panel {
+            width: 480px; min-width: 480px; 
+            height: 100%; 
+            background: var(--bg-panel); border-right: 1px solid var(--border); 
+            overflow-y: auto;
+            display: flex; flex-direction: column; gap: 20px; padding: 20px;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: calc(20px + var(--safe-bottom));
+        }
+
+        .preview-panel {
+            flex: 1; height: 100%; 
+            background-color: #000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: relative; 
+            background-image: linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px); 
+            background-size: 40px 40px;
+        }
+
+        /* --- COMPONENT STYLES --- */
+        .main-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 15px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+        .btn {
+            padding: 10px 20px; border-radius: 4px; font-size: 0.85rem; font-weight: 700;
+            border: 1px solid var(--border); background: #151515; color: var(--text-muted);
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; font-family: var(--font-tech); transition: 0.2s; position: relative; white-space: nowrap;
+        }
+        .btn:hover { background: #222; color: #fff; border-color: var(--primary); }
+        .btn-primary { background: rgba(0, 229, 255, 0.1); color: var(--primary); border-color: rgba(0, 229, 255, 0.3); }
+        .btn-accent { background: rgba(255, 0, 85, 0.1); color: var(--accent); border-color: rgba(255, 0, 85, 0.3); }
+        .btn-warning { background: rgba(255, 215, 0, 0.1); color: var(--warning); border-color: rgba(255, 215, 0, 0.3); }
+        .btn-success { background: rgba(0, 255, 157, 0.1); color: var(--success); border-color: rgba(0, 255, 157, 0.3); }
+        .btn-danger { background: rgba(255, 0, 85, 0.05); color: #ff4444; border-color: rgba(255, 0, 85, 0.2); }
+        .btn-danger:hover { background: rgba(255, 0, 85, 0.15); border-color: #ff4444; }
+
+        .search-box { flex: 1; min-width: 200px; position: relative; }
+        .search-box input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); padding: 10px 15px 10px 40px; border-radius: 4px; color: #fff; outline: none; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        .table-container { 
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch; 
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 600px; }
+        thead { background: #111; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        th { font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; }
+        td { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+
+        .hidden-pass { font-family: 'JetBrains Mono'; background: rgba(0, 229, 255, 0.05); padding: 5px 10px; border-radius: 3px; cursor: pointer; border: 1px solid rgba(0, 229, 255, 0.1); transition: all 0.2s; }
+        .hidden-pass.revealed { color: var(--success); background: rgba(0, 255, 157, 0.05); border-color: rgba(0, 255, 157, 0.2); }
+        
+        .password-wrapper { position: relative; display: flex; gap: 5px; }
+        .password-input-group { position: relative; flex: 1; }
+        .action-buttons { display: flex; gap: 5px; justify-content: flex-end; }
+        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .btn-icon:hover { color: var(--primary); border-color: var(--primary); }
+        .btn-icon-danger:hover { color: var(--accent); border-color: var(--accent); }
+
+        .bio-h2 { margin: 10px 0; color: var(--primary); font-size: 0.9rem; border-bottom: 1px solid #222; padding-bottom: 8px; font-family: var(--font-tech); text-transform: uppercase; }
+        .bio-input, .bio-textarea, .bio-select { width: 100%; padding: 12px; background: var(--bg-input); border: 1px solid var(--border); color: #fff; border-radius: 6px; margin-bottom: 15px; font-family: var(--font-tech); font-size: 0.85rem; }
+        
+        .tab-container { display: flex; gap: 4px; background: #111; padding: 4px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .bio-tab { flex: 1; padding: 10px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; border-radius: 6px; font-family: var(--font-tech); font-size: 0.75rem; }
+        .bio-tab.active { background: var(--bg-panel); color: var(--primary); border: 1px solid var(--border); }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        
+        .link-group { background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; cursor: default; }
+        .link-group.dragging { opacity: 0.5; border: 1px dashed var(--primary); }
+        .drag-handle { cursor: grab; padding: 5px 10px; color: #555; }
+        .drag-handle:active { cursor: grabbing; color: var(--primary); }
+
+        .preview-wrapper { 
+            width: 375px; height: 750px; max-height: 90%; background: #000; 
+            border: 1px solid #333; border-radius: 40px; position: relative; 
+            box-shadow: 0 0 60px rgba(0,0,0,0.9); overflow: hidden; transition: width 0.3s ease; 
+        }
+        .preview-wrapper::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 25px; background: #111; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; z-index: 100; }
+        #preview-content { height: 100%; overflow-y: auto; padding: 60px 20px 40px 20px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        
+        .preview-controls { position: absolute; top: 20px; right: 20px; display: flex; gap: 5px; background: var(--bg-panel); padding: 5px; border-radius: 8px; border: 1px solid var(--border); z-index: 200; }
+        .mode-btn { padding: 8px 12px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; border-radius: 4px; }
+        .mode-btn.active { background: #222; color: var(--primary); }
+
+        .mobile-edit-toggle { display: none; }
+        .mobile-close-bar { display: none; }
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-card); width: 90%; max-width: 500px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalSlideIn 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg-card); z-index: 10; }
+        .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: rgba(0,0,0,0.3); }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 12px 20px; border-radius: 4px; z-index: 2000; display: flex; align-items: center; gap: 10px; transform: translateX(100%); opacity: 0; transition: 0.3s; }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--accent); }
+
+        .form-control { width: 100%; background: var(--bg-input); border: 1px solid var(--border); padding: 12px; border-radius: 4px; color: #fff; outline: none; }
+        .form-group label { display: block; font-size: 0.75rem; margin-bottom: 6px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .logo span { display: none; }
+            .mobile-edit-toggle { 
+                display: flex; position: absolute; bottom: calc(20px + var(--safe-bottom)); right: 20px; 
+                background: var(--primary); color: #000; border: none; 
+                padding: 12px 20px; border-radius: 30px; font-weight: bold; font-family: var(--font-tech);
+                box-shadow: 0 4px 15px rgba(0,229,255,0.4); z-index: 500; 
+                align-items: center; gap: 8px; 
+            }
+            .editor-panel { 
+                width: 100%; min-width: 0; position: absolute; z-index: 600; 
+                height: 100%; transform: translateX(-100%); transition: transform 0.3s; 
+                background: var(--bg-panel);
+            }
+            .editor-panel.mobile-show { transform: translateX(0); }
+            .mobile-close-bar { display: block; margin-bottom: 15px; }
+            .mobile-close-bar button {
+                width: 100%; background: #222; border: 1px solid var(--border);
+                padding: 12px; color: white; border-radius: 4px; font-weight: bold;
+                display: flex; align-items: center; justify-content: center; gap: 10px;
+            }
+            .preview-wrapper { 
+                width: 100% !important; height: 100% !important; 
+                border: none !important; border-radius: 0 !important; 
+                box-shadow: none !important; max-height: none !important;
+            }
+            .preview-wrapper::before { display: none; }
+            .preview-controls { display: none; }
+            .preview-panel { padding-bottom: 0; }
+        }
+
+        /* --- RS TWEAK THEME STYLES (Bio Builder) --- */
+        .color-group {
+            display: flex; align-items: center;
+            background: var(--bg-input); border: 1px solid var(--border);
+            padding: 5px; border-radius: 6px; margin-bottom: 15px;
+        }
+        .color-group input[type="color"] {
+            width: 40px; height: 30px; border: none; background: none; cursor: pointer; padding: 0; margin: 0;
+        }
+        .color-val { margin-left: 10px; font-family: var(--font-tech); color: var(--text-muted); font-size: 0.8rem; }
+
+        .slider-container { margin-bottom: 20px; }
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .slider-value { color: var(--primary); font-family: var(--font-tech); font-size: 0.8rem; }
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px;
+            background: #333; border-radius: 3px; outline: none; margin: 10px 0; border: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+            background: var(--primary); cursor: pointer; transition: transform 0.2s;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* RS Tweak preview theme classes */
+        .rstweak-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 1; }
+        .rstweak-profile-section { text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; animation: fadeInDown 0.8s ease-out; }
+        .rstweak-profile-img { width: 125px; height: 125px; border-radius: 50%; object-fit: cover; border: 2px solid #2a2a2a; box-shadow: 0 0 30px rgba(0,0,0,0.7); margin-bottom: 16px; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .rstweak-profile-img:hover { transform: scale(1.08) rotate(3deg); border-color: var(--accent-color, #fff); }
+        .rstweak-name { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 8px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .rstweak-bio { color: #888; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; background: rgba(255,255,255,0.05); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .rstweak-links-grid { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+        .rstweak-link-item { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; background: rgba(20,20,20,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; text-decoration: none; transition: all 0.3s cubic-bezier(0.25,0.8,0.25,1); position: relative; overflow: hidden; opacity: 0; animation: slideInUp 0.6s forwards; }
+        .rstweak-link-item:hover { transform: translateY(-4px) scale(1.01); background: rgba(30,30,30,0.8); border-color: var(--accent-color, #00E5FF); box-shadow: 0 8px 25px -5px var(--accent-glow, rgba(0,229,255,0.4)); }
+        .rstweak-link-item::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; }
+        .rstweak-link-item:hover::after { left: 100%; }
+        .rstweak-link-icon { width: 38px; height: 38px; min-width: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 10px; transition: 0.3s; }
+        .rstweak-link-item:hover .rstweak-link-icon { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+        .rstweak-link-icon svg { width: 22px; height: 22px; filter: drop-shadow(0 0 5px var(--accent-glow, rgba(0,229,255,0.4))); }
+        .rstweak-link-content { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 10px; }
+        .rstweak-link-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.05rem; color: #fff; margin-bottom: 3px; letter-spacing: -0.5px; }
+        .rstweak-link-subtitle { font-size: 0.8rem; color: #777; font-weight: 500; transition: color 0.3s; }
+        .rstweak-link-item:hover .rstweak-link-subtitle { color: #aaa; }
+        .rstweak-link-arrow { width: 20px; height: 20px; min-width: 20px; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; }
+        .rstweak-link-item:hover .rstweak-link-arrow { opacity: 0.5; transform: translateX(0); }
+        .rstweak-footer { margin-top: 50px; text-align: center; font-size: 0.75rem; color: #444; font-family: 'JetBrains Mono', monospace; animation: fadeIn 1s ease-out 0.8s backwards; }
+        .rstweak-link-item:nth-child(1) { animation-delay: 0.1s; }
+        .rstweak-link-item:nth-child(2) { animation-delay: 0.2s; }
+        .rstweak-link-item:nth-child(3) { animation-delay: 0.3s; }
+        .rstweak-link-item:nth-child(4) { animation-delay: 0.4s; }
+        .rstweak-link-item:nth-child(5) { animation-delay: 0.5s; }
+        .rstweak-link-item:nth-child(6) { animation-delay: 0.6s; }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="logo"><i class="fas fa-shield-alt"></i> <span>RS TOOLKIT</span></div>
+        <nav class="main-nav">
+            <button class="nav-btn active" onclick="switchMainView('vault')" id="nav-vault"><i class="fas fa-lock"></i> VAULT</button>
+            <button class="nav-btn" onclick="switchMainView('bio')" id="nav-bio"><i class="fas fa-mobile-alt"></i> BIO BUILDER</button>
+        </nav>
+    </header>
+
+    <div class="app-content">
+        
+        <div id="view-vault" class="view-section active">
+            <div class="vault-inner">
+                <div class="main-controls">
+                    <button class="btn btn-primary" id="addEntryBtn"><i class="fas fa-plus"></i> ADD</button>
+                    <button class="btn btn-accent" onclick="openKeyGenModal()"><i class="fas fa-key"></i> UNLOCK</button>
+                    <button class="btn btn-warning" onclick="removeDuplicates()" title="Remove Duplicates"><i class="fas fa-clone"></i> DEDUP</button>
+                    <button class="btn btn-danger" onclick="pruneIncomplete()" title="Remove Missing User/Pass"><i class="fas fa-eraser"></i> PRUNE</button>
+                    <button class="btn btn-warning" onclick="openMergeModal()"><i class="fas fa-file-csv"></i> MERGE</button>
+                    <div style="position:relative; overflow:hidden; display:inline-block;">
+                        <button class="btn"><i class="fas fa-file-import"></i> IMPORT</button>
+                        <input type="file" id="csvInput" accept=".csv" style="position:absolute; left:0; top:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+                    </div>
+                    <button class="btn btn-success" id="exportBtn"><i class="fas fa-file-export"></i> EXPORT</button>
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search...">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="dataTable">
+                        <thead><tr><th style="width:50px;">Icon</th><th>Name</th><th>URL</th><th>User</th><th>Pass</th><th style="width:120px; text-align:right;">Actions</th></tr></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                    <div id="emptyState" style="text-align:center; padding:60px; color:var(--text-muted);">
+                        <i class="fas fa-lock" style="font-size:48px; margin-bottom:15px; opacity:0.5;"></i>
+                        <p>No Passwords Stored</p>
+                    </div>
+                </div>
+                <div style="color:var(--text-muted); font-size:0.8rem; text-align:center;"><span id="itemCount">0 stored</span></div>
+            </div>
+        </div>
+
+        <div id="view-bio" class="view-section">
+            <button class="mobile-edit-toggle" onclick="toggleMobileEditor()">
+                <i class="fas fa-sliders-h"></i> EDIT PROFILE
+            </button>
+
+            <div class="editor-panel">
+                <div class="mobile-close-bar">
+                    <button onclick="toggleMobileEditor()"><i class="fas fa-check"></i> DONE EDITING</button>
+                </div>
+
+                <h2 class="bio-h2"><i class="fas fa-shield-alt"></i> RS BUILDER <span style="font-size:0.6rem; margin-left:auto; color:#666">V7 + RS THEME</span></h2>
+                <div class="tab-container">
+                    <button class="bio-tab active" onclick="switchBioTab('basic')">CONTENT</button>
+                    <button class="bio-tab" onclick="switchBioTab('style')">STYLE</button>
+                    <button class="bio-tab" onclick="switchBioTab('advanced')">TWEAKS</button>
+                    <button class="bio-tab" onclick="switchBioTab('actions')">EXPORT</button>
+                </div>
+
+                <div id="tab-basic" class="tab-content active">
+                    <div class="form-group"><label>Profile Image URL</label><input type="text" id="input-img" class="bio-input" value="https://i.pinimg.com/736x/c2/91/a2/c291a2d59b07c04e42102f8d345630a9.jpg" oninput="updatePreview()"></div>
+                    <div class="form-group"><label>Display Name</label><input type="text" id="input-name" class="bio-input" value="RS TWEAKS" oninput="updatePreview()"></div>
+                    <div class="form-group"><label>Bio / Tagline</label><textarea id="input-bio" class="bio-textarea" rows="3" oninput="updatePreview()">@RS | alsh3la</textarea></div>
+                    <h2 class="bio-h2"><i class="fas fa-link"></i> LINKS</h2>
+                    <div id="links-container"></div>
+                    <button class="btn btn-primary" style="width:100%" onclick="addNewLink()"><i class="fas fa-plus"></i> ADD LINK</button>
+                </div>
+
+                <div id="tab-style" class="tab-content">
+                    <div class="form-group"><label>Theme</label>
+                        <select id="input-theme" class="bio-select" onchange="updatePreview()">
+                            <option value="oled">OLED Default</option>
+                            <option value="rstweak" selected>RS Tweak Theme</option>
+                            <option value="solid">Solid Block</option>
+                            <option value="outline">Tech Outline</option>
+                            <option value="glow">Neon Glow</option>
+                            <option value="glass">Glassmorphism</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Accent Color</label>
+                        <div class="color-group">
+                            <input type="color" id="input-color" value="#00E5FF" oninput="updateColor(this.value)">
+                            <span class="color-val" id="color-val-display">#00E5FF</span>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Background</label>
+                        <select id="input-bg-type" class="bio-select" onchange="updatePreview()">
+                            <option value="gradient">Deep Gradient</option>
+                            <option value="solid">Solid Black</option>
+                            <option value="grid">Cyber Grid</option>
+                            <option value="rstweak-bg">RS Tweak BG</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="tab-advanced" class="tab-content">
+                    <div class="slider-container">
+                        <div class="slider-header"><label>Corner Radius</label><span id="radius-val" class="slider-value">18px</span></div>
+                        <input type="range" id="input-radius" min="0" max="30" value="18" oninput="updatePreview()">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-header"><label>Vertical Spacing</label><span id="spacing-val" class="slider-value">14px</span></div>
+                        <input type="range" id="input-spacing" min="8" max="40" value="14" oninput="updatePreview()">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-header"><label>Glow Intensity</label><span id="glow-val" class="slider-value">70%</span></div>
+                        <input type="range" id="input-intensity" min="0" max="100" value="70" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group"><label>Custom CSS</label><textarea id="input-custom-css" class="bio-textarea" rows="5" placeholder=".rstweak-name { letter-spacing: 2px; }" oninput="updatePreview()"></textarea></div>
+                </div>
+
+                <div id="tab-actions" class="tab-content">
+                    <label class="bio-h2">PROJECT FILE</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-accent" style="flex:1" onclick="saveJSON()"><i class="fas fa-save"></i> SAVE</button>
+                        <button class="btn" style="flex:1" onclick="document.getElementById('file-input-bio').click()"><i class="fas fa-folder-open"></i> LOAD</button>
+                        <input type="file" id="file-input-bio" accept=".json" onchange="loadJSON(this)" style="display:none">
+                    </div>
+                    <label class="bio-h2" style="margin-top:20px;">DEPLOYMENT</label>
+                    <button class="btn btn-primary" style="width:100%" onclick="exportHTML()"><i class="fas fa-file-export"></i> DOWNLOAD HTML</button>
+                    <button class="btn btn-success" style="width:100%; margin-top:10px;" onclick="generateBioQRCode()"><i class="fas fa-qrcode"></i> GENERATE QR</button>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <div class="preview-controls">
+                    <button class="mode-btn active" onclick="setDevice('mobile')"><i class="fas fa-mobile-alt"></i></button>
+                    <button class="mode-btn" onclick="setDevice('desktop')"><i class="fas fa-desktop"></i></button>
+                </div>
+                <div class="preview-wrapper" id="preview-wrapper">
+                    <div id="preview-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="entryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Edit Entry</h3>
+                <button class="btn-icon" onclick="closeModals()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>Name</label><input type="text" id="entryName" class="form-control"></div>
+                <div class="form-group"><label>URL</label><input type="text" id="entryUrl" class="form-control"></div>
+
+                <div style="display:flex; gap:10px; align-items:flex-end;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Username</label>
+                        <input type="text" id="entryUser" class="form-control">
+                    </div>
+                    
+                    <button class="btn-icon" onclick="swapUserPass()" title="Swap User & Password" style="margin-bottom:2px; border-color:var(--primary); color:var(--primary); height:42px; width:42px;">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+
+                    <div class="form-group" style="flex:1;">
+                        <label>Password</label>
+                        <div class="password-wrapper">
+                            <input type="text" id="entryPass" class="form-control">
+                            <button class="btn-icon" onclick="toggleModalPassVisibility()" style="position:absolute; right:5px; top:5px; border:none;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes / Backup Codes</label>
+                    <textarea id="entryNotes" class="form-control" rows="5" placeholder="Paste extra info here..."></textarea>
+                    <div style="text-align:right; margin-top:5px;">
+                        <button class="btn" style="font-size:0.7rem; padding:5px 10px;" onclick="movePassToNotes()">Move Password to Notes</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModals()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEntry()" id="saveModalBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="mapModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-csv"></i> Map Columns</h3>
+                <button class="btn-icon" onclick="closeModals()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">
+                    Select which CSV columns correspond to the Vault fields.
+                </p>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group">
+                        <label style="color:var(--primary);">Name</label>
+                        <select id="mapName" class="form-control" onchange="updateMappingPreview()"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color:var(--primary);">URL</label>
+                        <select id="mapUrl" class="form-control" onchange="updateMappingPreview()"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color:var(--primary);">Username</label>
+                        <select id="mapUser" class="form-control" onchange="updateMappingPreview()"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="color:var(--accent);">Password</label>
+                        <select id="mapPass" class="form-control" onchange="updateMappingPreview()"></select>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
+                    <label style="font-size:0.75rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:10px;">
+                        <i class="fas fa-eye"></i> Import Preview (First 3 Entries)
+                    </label>
+                    <div id="csvPreviewContainer" style="background:#000; padding:10px; border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:#aaa; max-height:150px; overflow-y:auto; border:1px solid #222;">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModals()">Cancel</button>
+                <button class="btn btn-success" onclick="finalizeImport()">CONFIRM IMPORT</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="keyGenModal">
+        <div class="modal">
+            <div class="modal-header"><h3 style="color:var(--accent);">MASTER UNLOCKER</h3><button class="btn-icon" onclick="closeModals()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>Algorithm</label><select id="algoSelect" class="form-control"><option value="RS">RS (Standard)</option><option value="REV">RS2 (Advanced)</option></select></div>
+                <div class="form-group"><label>Zen ID</label><input type="number" id="zenIdInput" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="Enter Numeric ID..."></div>
+                <button class="btn btn-accent" onclick="runKeyGen()" style="width:100%">GENERATE CODE</button>
+                <div style="text-align:center; padding:20px; background:#111; border:1px solid var(--border); margin-top:10px; border-radius:4px;">
+                    <div id="keygenResult" style="font-size:2rem; font-weight:800; color:var(--primary); font-family:monospace;">----</div>
+                    <button class="btn-icon" onclick="copyKeyGenResult()" style="margin:10px auto 0 auto; width:100px;"><i class="fas fa-copy"></i> COPY</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="mergeModal">
+        <div class="modal">
+            <div class="modal-header"><h3 style="color:var(--warning);">CSV MERGER</h3><button class="btn-icon" onclick="closeModals()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <p style="color:var(--text-muted); font-size:0.9rem;">Select CSV files to combine.</p>
+                <input type="file" id="mergeFileInput" multiple="" accept=".csv" class="form-control">
+                <button class="btn btn-warning" onclick="processMerge()" style="width:100%; margin-top:15px;">MERGE & DOWNLOAD</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal" style="width:auto;"><div class="modal-header"><h3>Scan Profile</h3><button class="btn-icon" onclick="closeModals()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="align-items:center;"><div id="qr-container" style="background:white; padding:10px; border-radius:8px;"></div></div></div>
+    </div>
+
+    <div class="modal-overlay" id="noteViewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="noteViewTitle"><i class="fas fa-sticky-note"></i> Notes</h3>
+                <button class="btn-icon" onclick="closeModals()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="noteViewContent" class="note-viewer-body"></div>
+                <button class="btn btn-primary" onclick="copyNoteContent()" style="width:100%; margin-top:10px;">
+                    <i class="fas fa-copy"></i> COPY NOTES
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Ready</span></div>
+
+<script>
+    /* ================= SYSTEM ================= */
+    function showToast(msg, type="success") { const t=document.getElementById('toast'); t.innerHTML=`<i class="fas ${type==='error'?'fa-exclamation-triangle':'fa-check-circle'}"></i> <span>${msg}</span>`; t.className=`toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
+    function switchMainView(id) { document.querySelectorAll('.view-section,.nav-btn').forEach(e=>e.classList.remove('active')); document.getElementById(`view-${id}`).classList.add('active'); document.getElementById(`nav-${id}`).classList.add('active'); }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active')); }
+    function escapeHtml(t) { return t?t.replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"'):""; }
+    function escapeJs(t) { if(!t)return""; return t.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+    
+    function toggleMobileEditor() {
+        document.querySelector('.editor-panel').classList.toggle('mobile-show');
+    }
+
+    /* ================= VAULT LOGIC (With Preview) ================= */
+    let passwords = [], editIndex = -1;
+    let pendingCSVData = []; 
+    let pendingCSVHeaders = [];
+
+    // 1. Raw Parser
+    function parseRawCSV(csvText) {
+        const rows = [];
+        let currentRow = [];
+        let col = "";
+        let inQuote = false;
+
+        for (let i = 0; i < csvText.length; i++) {
+            const char = csvText[i];
+            const nextChar = csvText[i + 1];
+
+            if (inQuote) {
+                if (char === '"' && nextChar === '"') { col += '"'; i++; } 
+                else if (char === '"') { inQuote = false; } 
+                else { col += char; }
+            } else {
+                if (char === '"') { inQuote = true; } 
+                else if (char === ',') { currentRow.push(col); col = ""; } 
+                else if (char === '\n' || char === '\r') {
+                    if (char === '\r' && nextChar === '\n') i++;
+                    currentRow.push(col);
+                    if (currentRow.length > 1 || (currentRow.length === 1 && currentRow[0] !== "")) {
+                        rows.push(currentRow);
+                    }
+                    currentRow = []; col = "";
+                } else { col += char; }
+            }
+        }
+        if (col || currentRow.length > 0) { currentRow.push(col); rows.push(currentRow); }
+        return rows;
+    }
+
+    // 2. File Upload Listener
+    document.getElementById('csvInput').addEventListener('change', e => {
+        if (e.target.files.length) {
+            const r = new FileReader();
+            r.onload = ev => {
+                try {
+                    const rows = parseRawCSV(ev.target.result);
+                    if (rows.length < 2) return showToast("Empty CSV", "error");
+                    
+                    pendingCSVHeaders = rows[0]; 
+                    pendingCSVData = rows.slice(1); 
+                    
+                    openMappingModal(); 
+                } catch (err) { showToast("Error parsing CSV", "error"); }
+            };
+            r.readAsText(e.target.files[0]);
+            e.target.value = ''; 
+        }
+    });
+
+    // 3. Open Mapping Modal
+    function openMappingModal() {
+        const selects = ['mapName', 'mapUrl', 'mapUser', 'mapPass'];
+        selects.forEach(id => {
+            const el = document.getElementById(id);
+            el.innerHTML = '<option value="-1">-- Ignore --</option>'; 
+            pendingCSVHeaders.forEach((h, index) => {
+                el.innerHTML += `<option value="${index}">${h} (Col ${index+1})</option>`;
+            });
+        });
+
+        // Smart Auto-Select
+        smartSelect('mapName', ['identifier', 'name', 'title', 'service']);
+        smartSelect('mapUrl', ['website', 'url', 'login_uri']);
+        smartSelect('mapUser', ['username', 'user', 'email', 'login_username']);
+        smartSelect('mapPass', ['password', 'pass', 'secret', 'oneTimePassword', 'notes']);
+
+        updateMappingPreview(); 
+        document.getElementById('mapModal').classList.add('active');
+    }
+
+    function smartSelect(elementId, candidates) {
+        const el = document.getElementById(elementId);
+        const foundIndex = pendingCSVHeaders.findIndex(h => candidates.includes(h.toLowerCase().trim()));
+        if (foundIndex !== -1) el.value = foundIndex;
+    }
+
+    // 4. PREVIEW FUNCTION
+    function updateMappingPreview() {
+        const idxName = parseInt(document.getElementById('mapName').value);
+        const idxUser = parseInt(document.getElementById('mapUser').value);
+        const idxPass = parseInt(document.getElementById('mapPass').value);
+        
+        const container = document.getElementById('csvPreviewContainer');
+        container.innerHTML = '';
+
+        // Take only the first 3 rows for preview
+        const previewRows = pendingCSVData.slice(0, 3);
+        
+        previewRows.forEach((row, i) => {
+            const name = (idxName > -1 && row[idxName]) ? row[idxName] : "(No Name)";
+            const user = (idxUser > -1 && row[idxUser]) ? row[idxUser] : "(No User)";
+            let pass = (idxPass > -1 && row[idxPass]) ? row[idxPass] : "(No Pass)";
+            
+            // Truncate long passwords/notes for display cleanly
+            if(pass.length > 50) pass = pass.substring(0, 47) + "...";
+
+            const div = document.createElement('div');
+            div.style.marginBottom = "8px";
+            div.style.borderBottom = "1px dashed #333";
+            div.style.paddingBottom = "8px";
+            div.innerHTML = `
+                <div style="color:var(--primary); font-weight:bold;">#${i+1} ${escapeHtml(name)}</div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><i class="fas fa-user" style="width:15px;"></i> ${escapeHtml(user)}</span>
+                    <span style="color:var(--accent);"><i class="fas fa-key" style="width:15px;"></i> ${escapeHtml(pass)}</span>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // 5. Finalize Import
+    function finalizeImport() {
+        const idxName = parseInt(document.getElementById('mapName').value);
+        const idxUrl = parseInt(document.getElementById('mapUrl').value);
+        const idxUser = parseInt(document.getElementById('mapUser').value);
+        const idxPass = parseInt(document.getElementById('mapPass').value);
+
+        let count = 0;
+        pendingCSVData.forEach(row => {
+            if (row.length === 0) return;
+
+            const rawName = (idxName > -1 && row[idxName]) ? row[idxName] : "Unknown";
+            const rawUrl = (idxUrl > -1 && row[idxUrl]) ? row[idxUrl] : "";
+            const rawUser = (idxUser > -1 && row[idxUser]) ? row[idxUser] : "";
+            const rawPass = (idxPass > -1 && row[idxPass]) ? row[idxPass] : "";
+
+            let finalName = rawName;
+            if ((!finalName || finalName === "Unknown") && rawUrl) {
+                try { finalName = new URL(rawUrl.startsWith('http')?rawUrl:'https://'+rawUrl).hostname; } catch(e){}
+            }
+
+            passwords.push({
+                id: Date.now() + Math.random(),
+                name: finalName || "Imported Entry",
+                url: rawUrl,
+                username: rawUser,
+                password: rawPass
+            });
+            count++;
+        });
+
+        renderVaultTable();
+        closeModals();
+        showToast(`Imported ${count} entries`);
+        
+        pendingCSVData = [];
+        pendingCSVHeaders = [];
+    }
+
+    /* ================= TABLE & ENTRY LOGIC ================= */
+    function renderVaultTable() { 
+        const f = document.getElementById('searchInput').value || '';
+        const tb = document.getElementById('tableBody'); tb.innerHTML = ''; 
+        
+        // Filter logic
+        const d = passwords.filter(p => (p.name + p.url + p.username).toLowerCase().includes(f.toLowerCase())); 
+        
+        if(!d.length){ 
+            document.getElementById('emptyState').style.display = 'block'; 
+            tb.parentElement.style.display = 'none'; 
+            return; 
+        } 
+        
+        document.getElementById('emptyState').style.display = 'none'; 
+        tb.parentElement.style.display = 'table'; 
+        
+        d.forEach((p, i) => { 
+            const realIdx = passwords.findIndex(x => x.id === p.id);
+            const dom = p.url.includes('.') ? (p.url.startsWith('http') ? new URL(p.url).hostname : new URL('https://' + p.url).hostname) : ''; 
+            
+            // CHECK FOR NOTES
+            const hasNotes = p.notes && p.notes.trim().length > 0;
+            const noteBadge = hasNotes 
+                ? `<span class="note-badge" onclick="viewNote(${realIdx})" title="View Notes"><i class="fas fa-file-alt"></i> NOTES</span>` 
+                : '';
+
+            const tr = document.createElement('tr'); 
+            tr.innerHTML = `
+                <td>${dom ? `<img src="https://www.google.com/s2/favicons?domain=${dom}&sz=32" style="width:24px;border-radius:3px;">` : `<div style="width:24px;height:24px;background:#333;border-radius:3px;"></div>`}</td>
+                <td>
+                    <strong>${escapeHtml(p.name)}</strong>
+                    ${noteBadge} </td>
+                <td>${escapeHtml(p.url)}</td>
+                <td>${escapeHtml(p.username)}</td>
+                <td><span class="hidden-pass" onclick="toggleViewPassword(this, ${realIdx})">••••••••</span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-icon" onclick="copyToClipboard(${realIdx})"><i class="fas fa-copy"></i></button>
+                        <button class="btn-icon" onclick="openEditModal(${realIdx})"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-icon-danger" onclick="deleteEntry(${realIdx})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>`; 
+            tb.appendChild(tr); 
+        }); 
+        document.getElementById('itemCount').innerText = `${passwords.length} stored`; 
+    }
+
+    /* --- NOTE VIEWER LOGIC --- */
+    let currentNoteIndex = -1;
+
+    function viewNote(index) {
+        currentNoteIndex = index;
+        const item = passwords[index];
+        if (!item || !item.notes) return;
+
+        document.getElementById('noteViewTitle').innerHTML = `<i class="fas fa-sticky-note"></i> ${escapeHtml(item.name)}`;
+        document.getElementById('noteViewContent').innerText = item.notes; // Preserves whitespace via CSS
+        document.getElementById('noteViewModal').classList.add('active');
+    }
+
+    function copyNoteContent() {
+        if (currentNoteIndex === -1) return;
+        const note = passwords[currentNoteIndex].notes;
+        if (note) {
+            navigator.clipboard.writeText(note).then(() => showToast("Notes Copied"));
+        }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', () => renderVaultTable());
+
+    function toggleViewPassword(el, idx) {
+        if (el.classList.contains('revealed')) { el.textContent = '••••••••'; el.classList.remove('revealed'); } 
+        else { if(passwords[idx]) { el.textContent = passwords[idx].password; el.classList.add('revealed'); } }
+    }
+
+    function copyToClipboard(idx) { if(passwords[idx]) navigator.clipboard.writeText(passwords[idx].password).then(() => showToast("Copied")); }
+    
+    // Add New Entry Hook
+    document.getElementById('addEntryBtn').addEventListener('click',()=>{ 
+        editIndex=-1; document.getElementById('modalTitle').innerText="Add Password Entry"; 
+        document.getElementById('saveModalBtn').innerText="Save Entry";
+        document.getElementById('entryModal').classList.add('active'); 
+        ['entryName','entryUrl','entryUser','entryPass','entryNotes'].forEach(i=>document.getElementById(i).value=''); 
+    });
+    
+    // Edit Existing Entry
+    function openEditModal(index) {
+        editIndex = index; 
+        const item = passwords[index]; 
+        if(!item) return;
+
+        document.getElementById('modalTitle').innerText = "Edit Entry";
+        document.getElementById('saveModalBtn').innerText = "Save Changes";
+        
+        document.getElementById('entryName').value = item.name || "";
+        document.getElementById('entryUrl').value = item.url || "";
+        document.getElementById('entryUser').value = item.username || "";
+        document.getElementById('entryPass').value = item.password || "";
+        document.getElementById('entryNotes').value = item.notes || ""; // Load notes
+
+        document.getElementById('entryModal').classList.add('active');
+    }
+    
+    function deleteEntry(index) { if(confirm("Delete this entry?")) { passwords.splice(index, 1); renderVaultTable(); showToast("Entry deleted"); } }
+
+    function saveEntry() { 
+        const n = document.getElementById('entryName').value; 
+        if(!n) return showToast("Name required", "error"); 
+        
+        const newData = {
+            id: editIndex >= 0 ? passwords[editIndex].id : Date.now(),
+            name: n,
+            url: document.getElementById('entryUrl').value,
+            username: document.getElementById('entryUser').value,
+            password: document.getElementById('entryPass').value,
+            notes: document.getElementById('entryNotes').value 
+        };
+
+        if(editIndex >= 0) {
+            passwords[editIndex] = newData;
+        } else {
+            passwords.unshift(newData);
+        }
+
+        renderVaultTable(); 
+        closeModals(); 
+        showToast(editIndex >= 0 ? "Entry Updated" : "Entry Added"); 
+    }
+    
+    function swapUserPass() {
+        const userEl = document.getElementById('entryUser');
+        const passEl = document.getElementById('entryPass');
+        
+        const temp = userEl.value;
+        userEl.value = passEl.value;
+        passEl.value = temp;
+        
+        showToast("Swapped User & Pass");
+    }
+
+    function movePassToNotes() {
+        const passEl = document.getElementById('entryPass');
+        const notesEl = document.getElementById('entryNotes');
+        
+        if (passEl.value) {
+            notesEl.value = notesEl.value ? (notesEl.value + "\n" + passEl.value) : passEl.value;
+            passEl.value = "";
+            showToast("Moved to Notes");
+        }
+    }
+
+    function toggleModalPassVisibility() {
+        const passInput = document.getElementById('entryPass');
+        if (passInput.type === "password") { passInput.type = "text"; } else { passInput.type = "password"; }
+    }
+
+    document.getElementById('exportBtn').addEventListener('click',()=>{ 
+        if(!passwords.length)return showToast("Nothing to export","error"); 
+        let c="Name,URL,Username,Password,Notes\n"; 
+        passwords.forEach(p=>{ 
+            const escape=(t)=>t?`"${String(t).replace(/"/g,'""')}"`:'""'; 
+            c+=`${escape(p.name)},${escape(p.url)},${escape(p.username)},${escape(p.password)},${escape(p.notes)}\n` 
+        }); 
+        const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'})); a.download=`vault_backup_${Date.now()}.csv`; a.click(); 
+    });
+
+    function removeDuplicates() {
+        if(passwords.length === 0) return showToast("Vault is empty", "error");
+        if(!confirm("Remove duplicate entries? (Same URL & Username)")) return;
+        
+        const initial = passwords.length;
+        const seen = new Set();
+        passwords = passwords.filter(p => {
+            const key = (p.url + '|' + p.username).toLowerCase().trim();
+            if(seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        
+        renderVaultTable(); 
+        const diff = initial - passwords.length;
+        if(diff > 0) showToast(`Removed ${diff} duplicates`);
+        else showToast("No duplicates found");
+    }
+
+    function pruneIncomplete() {
+        if(passwords.length === 0) return showToast("Vault is empty", "error");
+        if(!confirm("Delete all entries missing a Username OR Password?")) return;
+
+        const initial = passwords.length;
+        passwords = passwords.filter(p => p.username.trim() !== "" && p.password.trim() !== "");
+        
+        renderVaultTable(); 
+        const diff = initial - passwords.length;
+        if(diff > 0) showToast(`Pruned ${diff} entries`);
+        else showToast("No incomplete entries found");
+    }
+
+    /* ================= KEYGEN LOGIC ================= */
+function openKeyGenModal() { 
+    document.getElementById('keyGenModal').classList.add('active'); 
+}
+
+function runKeyGen() { 
+    const inputEl = document.getElementById('zenIdInput');
+    if (!inputEl) return showToast("Input ID missing", "error");
+    
+    const idStr = inputEl.value; 
+    const mode = document.getElementById('algoSelect').value;
+
+    if (!idStr) return showToast("Enter ID", "error");
+    
+    const id = parseInt(idStr.replace(/\D/g, ''), 10); 
+    if(isNaN(id)) return showToast("Invalid ID", "error");
+
+    let finalOutput = "";
+    try {
+        if (mode === "RS") { 
+            // RS Algorithm (Requires 5 digits)
+            let k = ((id ^ 16170) * 199) + (id * 8); 
+            
+            // Added padStart to ensure leading zeros are included
+            finalOutput = (Math.abs(k) % 100000).toString().padStart(5, '0'); 
+            
+        } else { 
+            // REV (Astro V4) Algorithm (Requires 6 digits)
+            const seed = id;
+            let v3ntrh_obedjq = (((seed * 0x75) + ((seed ^ 0x3) * 0x391)) * 0x6F + 0x65) % 0xF4240;
+            let generatedPasscode = (v3ntrh_obedjq ^ (seed << 0x2)) & 0xFFFFFF;
+            
+            if (seed % 0x3 === 0x0) {
+                generatedPasscode = (generatedPasscode * 0x7 + 0x181CD);
+            } else if (seed % 0x5 === 0x0) {
+                generatedPasscode = (generatedPasscode * 0xB + 0xD431);
+            } else {
+                generatedPasscode = (generatedPasscode ^ (seed * 0x7A69));
+            }
+            
+            // >>> 0 forces JS to treat it as an unsigned 32-bit positive integer before modulo
+            const finalCode = (generatedPasscode >>> 0) % 0xF4240;
+            finalOutput = finalCode.toString().padStart(6, '0');
+        }
+        
+        document.getElementById('keygenResult').innerText = finalOutput;
+        showToast("Code Generated");
+        
+    } catch(e) { 
+        showToast("Error", "error"); 
+    }
+}
+    function copyKeyGenResult() { const txt = document.getElementById('keygenResult').innerText; if(txt !== '----') { navigator.clipboard.writeText(txt); showToast("Copied Code"); } }
+
+    /* ================= MERGE LOGIC ================= */
+    function openMergeModal() { document.getElementById('mergeModal').classList.add('active'); }
+    
+    async function processMerge() { 
+        const files = document.getElementById('mergeFileInput').files; 
+        if (files.length < 2) return showToast("Select at least 2 files", "error"); 
+        
+        let combinedData = [];
+        
+        for (let file of files) {
+            try {
+                const text = await file.text();
+                const rows = parseRawCSV(text); 
+                
+                if (rows.length < 2) continue; 
+
+                const headers = rows[0].map(h => h.toLowerCase().trim());
+                const data = rows.slice(1);
+
+                const findIdx = (candidates) => headers.findIndex(h => candidates.includes(h));
+
+                const idxName   = findIdx(['identifier', 'name', 'title', 'service', 'account']);
+                const idxUrl    = findIdx(['website', 'url', 'login_uri', 'address']);
+                const idxUser   = findIdx(['username', 'user', 'email', 'login_username', 'name']); 
+                const idxPass   = findIdx(['password', 'pass', 'pword', 'login_password']);
+                const idxSecret = findIdx(['secret', 'onetimepassword']); 
+                const idxNotes  = findIdx(['notes', 'comments']); 
+
+                const normalized = data.map(row => {
+                    const getVal = (i) => (i > -1 && row[i]) ? row[i].trim() : "";
+
+                    let name = getVal(idxName);
+                    let url = getVal(idxUrl);
+                    let user = getVal(idxUser);
+                    let pass = getVal(idxPass);
+
+                    if (!pass) {
+                        if (getVal(idxSecret)) {
+                            pass = "SECRET: " + getVal(idxSecret); 
+                        } else if (getVal(idxNotes)) {
+                            pass = "NOTE: " + getVal(idxNotes).replace(/\n/g, ' ').substring(0, 50); 
+                        }
+                    }
+
+                    if ((!name || name.toLowerCase() === 'unknown') && url) {
+                        try { name = new URL(url.startsWith('http')?url:'https://'+url).hostname; } catch(e){}
+                    }
+
+                    return { name: name || "Unknown", url: url, username: user, password: pass };
+                });
+
+                combinedData = combinedData.concat(normalized);
+
+            } catch (err) {
+                console.error(err);
+                showToast(`Error processing ${file.name}`, "error");
+            }
+        }
+
+        const uniqueMap = new Map();
+        combinedData.forEach(item => {
+            const key = (item.url + "|" + item.username).toLowerCase();
+            if (uniqueMap.has(key)) {
+                const existing = uniqueMap.get(key);
+                if (item.password.length > existing.password.length) {
+                    uniqueMap.set(key, item);
+                }
+            } else {
+                uniqueMap.set(key, item);
+            }
+        });
+
+        let csvContent = "Name,URL,Username,Password\n";
+        uniqueMap.forEach(p => { 
+            const escape = (t) => t ? `"${String(t).replace(/"/g, '""')}"` : '""'; 
+            csvContent += `${escape(p.name)},${escape(p.url)},${escape(p.username)},${escape(p.password)}\n`; 
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `merged_vault_${Date.now()}.csv`;
+        a.click();
+        
+        closeModals();
+        showToast(`Merged ${uniqueMap.size} unique entries`);
+    }
+
+    /* ================= BIO BUILDER ================= */
+    const icons = {
+        web: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.41z",
+        github: "M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z",
+        discord: "M13.545 2.907a13.683 13.683 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.575-.406.838-1.218-.183-2.453-.183-3.65 0-.115-.263-.27-.588-.412-.838a.051.051 0 0 0-.052-.025 13.69 13.69 0 0 0-3.256 1.011.052.052 0 0 0-.026.024 13.84 13.84 0 0 0-3.762 10.375.053.053 0 0 0 .02.042c1.378 1.017 2.709 1.637 4.013 2.043a.053.053 0 0 0 .056-.018c.307-.42.576-.874.81-1.353a.05.05 0 0 0-.027-.068 8.88 8.88 0 0 1-1.274-.608.05.05 0 0 1-.005-.084c.105-.078.21-.159.312-.24a.05.05 0 0 1 .056-.007c2.636 1.2 5.503 1.2 8.117 0a.05.05 0 0 1 .056.007c.102.081.208.163.315.241a.05.05 0 0 1-.005.084 8.7 8.7 0 0 1-1.277.609.05.05 0 0 0-.027.068c.237.478.508.932.815 1.352a.05.05 0 0 0 .056.018 13.85 13.85 0 0 0 4.02-2.043.05.05 0 0 0 .02-.042 13.834 13.834 0 0 0-3.765-10.375.051.051 0 0 0-.025-.024z",
+        email: "M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+    };
+
+    const rstweakColors = [
+        { color: '#00fbff', glow: 'rgba(0, 251, 255, 0.4)' },
+        { color: '#008cff', glow: 'rgba(0, 140, 255, 0.4)' },
+        { color: '#00ffaa', glow: 'rgba(0, 255, 170, 0.4)' },
+        { color: '#aa00ff', glow: 'rgba(170, 0, 255, 0.4)' },
+        { color: '#ffaa00', glow: 'rgba(255, 170, 0, 0.4)' },
+        { color: '#ff008c', glow: 'rgba(255, 0, 140, 0.4)' }
+    ];
+
+    let linksData = [
+        { title: "RS Vault", url: "https://rs1.alsh3la991.workers.dev/", icon: "web", subtitle: "Secure Storage", isCustom: false },
+        { title: "RS Toolkit", url: "https://workplace-clipboard.alsh3la991.workers.dev/", icon: "web", subtitle: "Utilities Collection", isCustom: false },
+        { title: "CyberBridge", url: "https://wifi-bridge.alsh3la991.workers.dev/", icon: "web", subtitle: "Network Tools", isCustom: false }
+    ];
+
+    function switchBioTab(t) { document.querySelectorAll('.bio-tab,.tab-content').forEach(e=>e.classList.remove('active')); event.target.classList.add('active'); document.getElementById(`tab-${t}`).classList.add('active'); }
+
+    // DRAG AND DROP
+    let dragSrcEl = null;
+    function handleDragStart(e) { dragSrcEl = this; e.dataTransfer.effectAllowed = 'move'; }
+    function handleDrop(e) {
+        if (dragSrcEl !== this) {
+            const s = parseInt(dragSrcEl.dataset.index), t = parseInt(this.dataset.index);
+            [linksData[s], linksData[t]] = [linksData[t], linksData[s]];
+            renderEditorLinks(); updatePreview();
+        }
+    }
+
+    function renderEditorLinks() {
+        const container = document.getElementById('links-container');
+        container.innerHTML = '';
+        linksData.forEach((link, index) => {
+            const div = document.createElement('div');
+            div.className = 'link-group';
+            div.draggable = true;
+            div.dataset.index = index;
+            div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragover', e => e.preventDefault());
+            div.addEventListener('drop', handleDrop);
+
+            const iconOptions = Object.keys(icons).map(key =>
+                `<option value="${key}" ${link.icon === key ? 'selected' : ''}>${key.toUpperCase()}</option>`
+            ).join('');
+
+            div.innerHTML = `
+                <div class="link-header">
+                    <span class="drag-handle"><i class="fas fa-bars"></i></span>
+                    <div class="link-number">${index + 1}</div>
+                    <button class="remove-btn" onclick="removeLink(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="text" class="bio-input" placeholder="Title" value="${escapeHtml(link.title)}" oninput="updateLink(${index}, 'title', this.value)">
+                <input type="text" class="bio-input" placeholder="Subtitle / Description" value="${escapeHtml(link.subtitle || '')}" oninput="updateLink(${index}, 'subtitle', this.value)">
+                <input type="url" class="bio-input" placeholder="URL" value="${escapeHtml(link.url)}" oninput="updateLink(${index}, 'url', this.value)">
+                <select class="bio-select" onchange="updateLinkIcon(${index}, this.value)">${iconOptions}<option value="custom" ${link.icon==='custom'?'selected':''}>CUSTOM SVG</option></select>
+                <div style="display:${link.icon==='custom'?'block':'none'}; margin-top:5px;">
+                    <label style="font-size:0.7rem; color:var(--text-muted);">SVG PATH DATA</label>
+                    <textarea class="bio-textarea" style="font-size:0.8rem; border-color:var(--primary);" placeholder="M12 2C6..." rows="2" oninput="updateLink(${index}, 'customPath', this.value)">${escapeHtml(link.customPath || '')}</textarea>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function updateLink(idx, f, v) { linksData[idx][f] = v; updatePreview(); }
+    function updateLinkIcon(idx, v) { linksData[idx].icon = v; linksData[idx].isCustom = (v === 'custom'); renderEditorLinks(); updatePreview(); }
+    function addNewLink() { linksData.push({ title: "New Link", url: "", subtitle: "Description", icon: "web", isCustom: false }); renderEditorLinks(); updatePreview(); }
+    function removeLink(idx) { if(confirm("Delete this link?")) { linksData.splice(idx, 1); renderEditorLinks(); updatePreview(); } }
+
+    function updatePreview() {
+        const theme = document.getElementById('input-theme').value;
+        const name = document.getElementById('input-name').value;
+        const img = document.getElementById('input-img').value;
+        const bio = document.getElementById('input-bio').value;
+        const color = document.getElementById('input-color').value;
+        const bgType = document.getElementById('input-bg-type').value;
+        const radius = document.getElementById('input-radius').value;
+        const spacing = document.getElementById('input-spacing').value;
+        const intensity = document.getElementById('input-intensity').value;
+        const customCSS = document.getElementById('input-custom-css').value;
+
+        document.getElementById('radius-val').innerText = radius + 'px';
+        document.getElementById('spacing-val').innerText = spacing + 'px';
+        document.getElementById('glow-val').innerText = intensity + '%';
+        document.getElementById('color-val-display').innerText = color;
+
+        const hexToRgba = (h, a) => { const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; };
+        const content = document.getElementById('preview-content');
+
+        let bgCSS = 'background: #000;';
+        if (bgType === 'gradient') bgCSS = `background: radial-gradient(circle at 50% 0%, ${hexToRgba(color, 0.2)}, #000 70%);`;
+        if (bgType === 'grid') bgCSS = `background: linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px); background-size: 30px 30px; background-color: #050505;`;
+        if (bgType === 'rstweak-bg') bgCSS = `background-color: #050505; background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 60%);`;
+        content.parentNode.style = bgCSS;
+
+        const glowColor = hexToRgba(color, intensity / 200);
+
+        if (theme === 'rstweak') {
+            const linksHTML = linksData.map((link, index) => {
+                let path = icons['web'];
+                if (link.isCustom && link.customPath) path = link.customPath;
+                else if (icons[link.icon]) path = icons[link.icon];
+
+                const colorIndex = index % rstweakColors.length;
+                const linkColor = rstweakColors[colorIndex].color;
+                const linkGlow = rstweakColors[colorIndex].glow;
+
+                return `
+                <a href="${link.url}" class="rstweak-link-item" style="--accent-color: ${linkColor}; --accent-glow: ${linkGlow}; border-radius: ${radius}px; margin-bottom: ${spacing}px;">
+                    <div class="rstweak-link-icon">
+                        <svg viewBox="0 0 24 24" fill="${linkColor}"><path d="${path}"/></svg>
+                    </div>
+                    <div class="rstweak-link-content">
+                        <span class="rstweak-link-title">${escapeHtml(link.title)}</span>
+                        <span class="rstweak-link-subtitle">${escapeHtml(link.subtitle || '')}</span>
+                    </div>
+                    <div class="rstweak-link-arrow">
+                        <svg viewBox="0 0 24 24" fill="#fff"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                    </div>
+                </a>`;
+            }).join('');
+
+            content.innerHTML = `
+                <style>
+                    .rstweak-profile-img { border-color: ${color}; box-shadow: 0 0 ${intensity/2}px ${glowColor}; }
+                    ${customCSS}
+                </style>
+                <div class="rstweak-container">
+                    <div class="rstweak-profile-section">
+                        <img src="${img}" class="rstweak-profile-img">
+                        <h1 class="rstweak-name">${escapeHtml(name)}</h1>
+                        <p class="rstweak-bio">${escapeHtml(bio).replace(/\n/g, '<br>')}</p>
+                    </div>
+                    <div class="rstweak-links-grid">${linksHTML}</div>
+                    <div class="rstweak-footer">© ${new Date().getFullYear()} RS TWEAKS • OLED EDITION</div>
+                </div>`;
+        } else {
+            let btnCSS = '';
+            if (theme === 'solid' || theme === 'oled') btnCSS = `background: #151515; border: 1px solid #333;`;
+            if (theme === 'outline') btnCSS = `background: transparent; border: 1px solid ${color}; color: ${color};`;
+            if (theme === 'glow') btnCSS = `background: transparent; border: 1px solid ${color}; box-shadow: 0 0 ${intensity/5}px ${glowColor};`;
+            if (theme === 'glass') btnCSS = `background: rgba(255,255,255,0.05); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);`;
+
+            const linksHTML = linksData.map(link => {
+                let path = icons['web'];
+                if (link.isCustom && link.customPath) path = link.customPath;
+                else if (icons[link.icon]) path = icons[link.icon];
+                return `<a href="${link.url}" class="oled-link-item" target="_blank" style="${btnCSS} border-radius: ${radius}px; margin-bottom: ${spacing}px;"><svg class="oled-icon" viewBox="0 0 24 24" style="fill: ${theme==='outline' ? color : 'white'};"><path d="${path}"/></svg><span class="oled-link-text">${escapeHtml(link.title)}</span></a>`;
+            }).join('');
+
+            content.innerHTML = `
+                <style>
+                    .oled-profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #333; margin: 0 auto 15px auto; display: block; border-color: ${color}; box-shadow: 0 0 ${intensity/2}px ${glowColor}; }
+                    .oled-name { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 800; margin: 0 0 5px 0; color: #fff; text-align: center; text-shadow: 0 0 ${intensity/3}px ${glowColor}; }
+                    .oled-bio { color: #bbb; margin-bottom: 30px; line-height: 1.5; text-align: center; white-space: pre-wrap; font-size: 0.95rem; font-weight: 500; font-family: 'Segoe UI', sans-serif; }
+                    .oled-links { display: flex; flex-direction: column; width: 100%; gap: 15px; }
+                    .oled-link-item { display: flex; align-items: center; padding: 18px; color: #fff; text-decoration: none; border-radius: 8px; transition: transform 0.2s; position: relative; }
+                    .oled-link-item:hover { transform: translateY(-3px); border-color: ${color}; box-shadow: 0 5px 20px ${glowColor}; }
+                    .oled-icon { width: 24px; height: 24px; position: absolute; left: 20px; }
+                    .oled-link-text { flex: 1; text-align: center; font-weight: 600; font-size: 1rem; font-family: 'Segoe UI', sans-serif; }
+                    ${customCSS}
+                </style>
+                <img src="${img}" class="oled-profile-img">
+                <h1 class="oled-name">${escapeHtml(name)}</h1>
+                <p class="oled-bio">${escapeHtml(bio).replace(/\n/g, '<br>')}</p>
+                <div class="oled-links">${linksHTML}</div>
+            `;
+        }
+    }
+
+    function setDevice(m) {
+        const w = document.getElementById('preview-wrapper');
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        if(event) event.currentTarget.classList.add('active');
+        w.style.width = m==='mobile'?'375px':'100%';
+        w.style.height = m==='mobile'?'750px':'100%';
+        w.style.borderRadius = m==='mobile'?'40px':'0';
+    }
+    function updateColor(v) { document.getElementById('input-color').value = v; document.getElementById('color-val-display').innerText = v; updatePreview(); }
+
+    function exportHTML() {
+        const theme = document.getElementById('input-theme').value;
+        const name = document.getElementById('input-name').value;
+        const previewHTML = document.getElementById('preview-content').innerHTML;
+        const bgStyle = document.getElementById('preview-content').parentNode.style.cssText;
+
+        let html = '';
+        if (theme === 'rstweak') {
+            html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>${name}</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { ${bgStyle} color: #fff; font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; overflow-x: hidden; }
+        .rstweak-container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; }
+        .rstweak-profile-section { text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; animation: fadeInDown 0.8s ease-out; }
+        .rstweak-profile-img { width: 125px; height: 125px; border-radius: 50%; object-fit: cover; border: 2px solid #2a2a2a; box-shadow: 0 0 30px rgba(0,0,0,0.7); margin-bottom: 16px; transition: transform 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .rstweak-profile-img:hover { transform: scale(1.08) rotate(3deg); }
+        .rstweak-name { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 8px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .rstweak-bio { color: #888; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; background: rgba(255,255,255,0.05); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .rstweak-links-grid { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+        .rstweak-link-item { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; background: rgba(20,20,20,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden; opacity: 0; animation: slideInUp 0.6s forwards; }
+        .rstweak-link-item:hover { transform: translateY(-4px) scale(1.01); background: rgba(30,30,30,0.8); border-color: var(--accent-color); box-shadow: 0 8px 25px -5px var(--accent-glow); }
+        .rstweak-link-icon { width: 38px; height: 38px; min-width: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 10px; }
+        .rstweak-link-icon svg { width: 22px; height: 22px; }
+        .rstweak-link-content { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 10px; }
+        .rstweak-link-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.05rem; color: #fff; margin-bottom: 3px; }
+        .rstweak-link-subtitle { font-size: 0.8rem; color: #777; }
+        .rstweak-link-arrow { width: 20px; height: 20px; min-width: 20px; opacity: 0; transform: translateX(-10px); transition: all 0.3s; }
+        .rstweak-link-item:hover .rstweak-link-arrow { opacity: 0.5; transform: translateX(0); }
+        .rstweak-footer { margin-top: 50px; text-align: center; font-size: 0.75rem; color: #444; font-family: 'JetBrains Mono', monospace; }
+        .rstweak-link-item:nth-child(1){animation-delay:0.1s} .rstweak-link-item:nth-child(2){animation-delay:0.2s} .rstweak-link-item:nth-child(3){animation-delay:0.3s} .rstweak-link-item:nth-child(4){animation-delay:0.4s} .rstweak-link-item:nth-child(5){animation-delay:0.5s} .rstweak-link-item:nth-child(6){animation-delay:0.6s}
+        @keyframes slideInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+        @media (min-width:768px) { .rstweak-container { background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-radius:24px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 20px 40px rgba(0,0,0,0.5); padding:60px 40px; } }
+        ${document.querySelector('#preview-content style') ? document.querySelector('#preview-content style').innerHTML : ''}
+    </style>
+</head>
+<body>
+    ${previewHTML.replace(/<style>[\s\S]*?<\/style>/, '')}
+</body>
+</html>`;
+        } else {
+            html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>${name}</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; min-height: 100vh; color: white; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; ${bgStyle} background-attachment: fixed; }
+        .container { width: 100%; max-width: 480px; padding: 40px 20px; text-align: center; animation: fadeIn 0.5s ease; }
+        a { text-decoration: none; }
+        @media (min-width:768px) { .container { background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-radius:24px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 20px 40px rgba(0,0,0,0.5); padding:60px 40px; } }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        ${document.querySelector('#preview-content style') ? document.querySelector('#preview-content style').innerHTML : ''}
+    </style>
+</head>
+<body>
+    <div class="container">${previewHTML.replace(/<style>[\s\S]*?<\/style>/, '')}</div>
+</body>
+</html>`;
+        }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([html], {type: 'text/html'}));
+        a.download = `${name.replace(/\s/g,'-')}.html`;
+        a.click();
+        showToast("HTML Exported!");
+    }
+
+    function saveJSON() {
+        const state = {
+            profile: { name: document.getElementById('input-name').value, img: document.getElementById('input-img').value, bio: document.getElementById('input-bio').value, color: document.getElementById('input-color').value },
+            settings: { theme: document.getElementById('input-theme').value, bgType: document.getElementById('input-bg-type').value, radius: document.getElementById('input-radius').value, spacing: document.getElementById('input-spacing').value, intensity: document.getElementById('input-intensity').value, customCSS: document.getElementById('input-custom-css').value },
+            links: linksData
+        };
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'})); a.download = 'rs-profile.json'; a.click();
+        showToast("Project Saved!");
+    }
+
+    function loadJSON(input) {
+        if(!input.files[0]) return;
+        const r = new FileReader();
+        r.onload = e => {
+            try {
+                const d = JSON.parse(e.target.result);
+                document.getElementById('input-name').value = d.profile.name;
+                document.getElementById('input-img').value = d.profile.img;
+                document.getElementById('input-bio').value = d.profile.bio;
+                document.getElementById('input-color').value = d.profile.color;
+                updateColor(d.profile.color);
+                document.getElementById('input-theme').value = d.settings.theme || 'rstweak';
+                document.getElementById('input-bg-type').value = d.settings.bgType;
+                document.getElementById('input-radius').value = d.settings.radius;
+                document.getElementById('input-spacing').value = d.settings.spacing;
+                document.getElementById('input-intensity').value = d.settings.intensity || 70;
+                document.getElementById('input-custom-css').value = d.settings.customCSS || '';
+                linksData = d.links;
+                renderEditorLinks(); updatePreview(); showToast("Project Loaded!");
+            } catch(err) { showToast("Error loading file", "error"); }
+        };
+        r.readAsText(input.files[0]);
+    }
+
+    function generateBioQRCode() { const qr = qrcode(0, 'L'); qr.addData("https://rs-profile.com"); qr.make(); document.getElementById('qr-container').innerHTML = qr.createImgTag(5); document.getElementById('qrModal').classList.add('active'); }
+
+    document.addEventListener('DOMContentLoaded', () => { renderEditorLinks(); updatePreview(); });
+</script>
+
+</body></html>
