@@ -609,7 +609,7 @@
     <div id="toast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Ready</span></div>
 
 <script>
-    /* ================= SYSTEM ================= */
+    /* ================ SYSTEM ================ */
     function showToast(msg, type="success") { const t=document.getElementById('toast'); t.innerHTML=`<i class="fas ${type==='error'?'fa-exclamation-triangle':'fa-check-circle'}"></i> <span>${msg}</span>`; t.className=`toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
     function switchMainView(id) { document.querySelectorAll('.view-section,.nav-btn').forEach(e=>e.classList.remove('active')); document.getElementById(`view-${id}`).classList.add('active'); document.getElementById(`nav-${id}`).classList.add('active'); }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active')); }
