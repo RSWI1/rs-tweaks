@@ -627,7 +627,58 @@
             .preview-controls { display:none; }
         }
 
-        /* ─── RS TWEAK PREVIEW THEME ─── */
+        /* ─── RS LIVE PREVIEW THEME (from index.html) ─── */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        .rslive-container { width:100%; max-width:480px; display:flex; flex-direction:column; gap:18px; position:relative; z-index:1; margin:0 auto; }
+        .rslive-profile { text-align:center; display:flex; flex-direction:column; align-items:center; animation:fadeInDown 0.9s cubic-bezier(0.22,1,0.36,1); }
+        .rslive-avatar-wrap { position:relative; margin-bottom:18px; }
+        .rslive-avatar { width:100px; height:100px; border-radius:50%; object-fit:cover; border:2.5px solid rgba(255,255,255,0.08); box-shadow:0 0 40px rgba(0,251,255,0.12),0 8px 32px rgba(0,0,0,0.6); transition:all 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .rslive-avatar:hover { transform:scale(1.06) rotate(2deg); box-shadow:0 0 60px rgba(0,251,255,0.2),0 12px 40px rgba(0,0,0,0.7); border-color:rgba(0,251,255,0.3); }
+        .rslive-status-ring { position:absolute; bottom:4px; right:4px; width:20px; height:20px; background:#00ffaa; border-radius:50%; border:3px solid #000; box-shadow:0 0 10px rgba(0,255,170,0.4); animation:rslive-pulse 2s infinite; }
+        @keyframes rslive-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,255,170,0.4)} 50%{box-shadow:0 0 0 6px rgba(0,255,170,0)} }
+        .rslive-name { font-family:'JetBrains Mono',monospace; font-size:1.6rem; font-weight:800; color:#fff; letter-spacing:-1.5px; margin-bottom:4px; }
+        .rslive-handle { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#00fbff; margin-bottom:8px; font-weight:500; }
+        .rslive-bio { color:#a0a0a0; font-size:0.85rem; line-height:1.5; max-width:300px; }
+        .rslive-location { display:inline-flex; align-items:center; gap:5px; margin-top:9px; font-size:0.72rem; color:#666; background:rgba(255,255,255,0.03); padding:5px 12px; border-radius:100px; border:1px solid rgba(255,255,255,0.06); }
+        .rslive-location svg { width:11px; height:11px; }
+        /* social bar */
+        .rslive-social { display:flex; justify-content:center; gap:10px; margin:4px 0 8px; }
+        .rslive-social-btn { width:42px; height:42px; border-radius:13px; background:rgba(18,18,22,0.75); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden; }
+        .rslive-social-btn::before { content:''; position:absolute; inset:0; background:var(--sc,#fff); opacity:0; transition:opacity 0.3s; }
+        .rslive-social-btn:hover { transform:translateY(-4px) scale(1.08); border-color:var(--sc,#fff); box-shadow:0 8px 20px -4px var(--sg,rgba(255,255,255,0.2)); }
+        .rslive-social-btn:hover::before { opacity:0.1; }
+        .rslive-social-btn svg { width:19px; height:19px; position:relative; z-index:1; transition:transform 0.3s; }
+        .rslive-social-btn:hover svg { transform:scale(1.1); }
+        /* divider */
+        .rslive-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent); margin:4px 0; }
+        /* stats */
+        .rslive-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:4px 0; }
+        .rslive-stat { background:rgba(18,18,22,0.75); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:13px 8px; text-align:center; transition:all 0.3s; }
+        .rslive-stat:hover { background:rgba(28,28,36,0.9); border-color:rgba(255,255,255,0.14); transform:translateY(-2px); }
+        .rslive-stat-num { font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:700; color:#fff; display:block; margin-bottom:2px; }
+        .rslive-stat-lbl { font-size:0.62rem; color:#666; text-transform:uppercase; letter-spacing:0.8px; font-weight:600; }
+        /* link cards */
+        .rslive-links { display:flex; flex-direction:column; gap:12px; width:100%; }
+        .rslive-card { display:flex; align-items:center; gap:14px; padding:15px 18px; background:rgba(18,18,22,0.75); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,0.06); border-radius:18px; text-decoration:none; transition:all 0.35s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden; opacity:0; animation:slideInUp 0.55s forwards; }
+        .rslive-card::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(90deg,var(--cc,#00fbff) 0%,transparent 60%); opacity:0; transition:opacity 0.4s; pointer-events:none; }
+        .rslive-card:hover { transform:translateY(-3px) scale(1.01); background:rgba(28,28,36,0.9); border-color:var(--cc,#00fbff); box-shadow:0 12px 32px -8px var(--cg,rgba(0,251,255,0.25)); }
+        .rslive-card:hover::after { opacity:0.04; }
+        .rslive-card.featured { background:linear-gradient(135deg,rgba(0,251,255,0.06),rgba(170,0,255,0.06)); border-color:rgba(0,251,255,0.15); }
+        .rslive-card.featured::before { content:'FEATURED'; position:absolute; top:8px; right:-28px; background:#00fbff; color:#000; font-family:'JetBrains Mono',monospace; font-size:0.52rem; font-weight:800; padding:3px 30px; transform:rotate(35deg); letter-spacing:1px; }
+        .rslive-icon-box { width:40px; height:40px; min-width:40px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.05); transition:all 0.3s; position:relative; z-index:1; }
+        .rslive-card:hover .rslive-icon-box { background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.1); transform:scale(1.05); }
+        .rslive-icon-box svg { width:20px; height:20px; }
+        .rslive-link-body { flex:1; display:flex; flex-direction:column; gap:2px; position:relative; z-index:1; }
+        .rslive-link-title { font-family:'Inter',sans-serif; font-weight:600; font-size:0.9rem; color:#fff; letter-spacing:-0.2px; }
+        .rslive-link-desc { font-size:0.74rem; color:#666; }
+        .rslive-arrow { width:18px; height:18px; min-width:18px; opacity:0; transform:translateX(-8px); transition:all 0.3s; color:#666; position:relative; z-index:1; }
+        .rslive-card:hover .rslive-arrow { opacity:0.6; transform:translateX(0); color:var(--cc,#00fbff); }
+        .rslive-card:nth-child(1){animation-delay:0.15s} .rslive-card:nth-child(2){animation-delay:0.23s} .rslive-card:nth-child(3){animation-delay:0.31s} .rslive-card:nth-child(4){animation-delay:0.39s} .rslive-card:nth-child(5){animation-delay:0.47s} .rslive-card:nth-child(6){animation-delay:0.55s} .rslive-card:nth-child(7){animation-delay:0.63s} .rslive-card:nth-child(8){animation-delay:0.71s}
+        /* footer */
+        .rslive-footer { margin-top:30px; text-align:center; font-size:0.68rem; color:#3a3a3a; font-family:'JetBrains Mono',monospace; display:flex; flex-direction:column; gap:8px; }
+        .rslive-footer-links { display:flex; justify-content:center; gap:16px; }
+        .rslive-footer-links a { color:#444; text-decoration:none; font-size:0.68rem; transition:color 0.3s; }
+        .rslive-footer-links a:hover { color:#00fbff; }
         .rstweak-container { width:100%; max-width:500px; display:flex; flex-direction:column; gap:20px; position:relative; z-index:1; }
         .rstweak-profile-section { text-align:center; margin-bottom:25px; display:flex; flex-direction:column; align-items:center; animation:fadeInDown 0.8s ease-out; }
         .rstweak-profile-img { width:125px; height:125px; border-radius:50%; object-fit:cover; border:2px solid #2a2a2a; box-shadow:0 0 30px rgba(0,0,0,0.7); margin-bottom:16px; transition:transform 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
@@ -757,7 +808,31 @@
                 <div id="tab-basic" class="tab-content active">
                     <div class="form-group"><label>Profile Image URL</label><input type="text" id="input-img" class="bio-input" value="https://i.pinimg.com/736x/c2/91/a2/c291a2d59b07c04e42102f8d345630a9.jpg" oninput="updatePreview()"></div>
                     <div class="form-group"><label>Display Name</label><input type="text" id="input-name" class="bio-input" value="RS TWEAKS" oninput="updatePreview()"></div>
+                    <div class="form-group"><label>Handle <span style="color:var(--text-muted);font-size:0.68rem">(RS Live theme)</span></label><input type="text" id="input-handle" class="bio-input" value="@alsh3la" oninput="updatePreview()"></div>
+                    <div class="form-group"><label>Location <span style="color:var(--text-muted);font-size:0.68rem">(RS Live theme)</span></label><input type="text" id="input-location" class="bio-input" value="Available Worldwide" oninput="updatePreview()"></div>
                     <div class="form-group"><label>Bio / Tagline</label><textarea id="input-bio" class="bio-textarea" rows="3" oninput="updatePreview()">@RS | alsh3la</textarea></div>
+
+                    <!-- RS LIVE EXTRAS -->
+                    <div id="rslive-extras" style="display:none;">
+                        <h2 class="bio-h2" style="margin-top:6px;"><i class="fas fa-chart-bar"></i> STATS <span style="font-size:0.6rem;color:var(--text-muted);margin-left:auto">RS Live only</span></h2>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+                            <div class="form-group"><label style="font-size:0.66rem">Stat 1 #</label><input type="text" id="rslive-stat1-val" class="bio-input" value="15" oninput="updatePreview()"></div>
+                            <div class="form-group"><label style="font-size:0.66rem">Stat 2 #</label><input type="text" id="rslive-stat2-val" class="bio-input" value="0" oninput="updatePreview()"></div>
+                            <div class="form-group"><label style="font-size:0.66rem">Stat 3 #</label><input type="text" id="rslive-stat3-val" class="bio-input" value="99%" oninput="updatePreview()"></div>
+                            <div class="form-group"><label style="font-size:0.66rem">Label 1</label><input type="text" id="rslive-stat1-lbl" class="bio-input" value="Projects" oninput="updatePreview()"></div>
+                            <div class="form-group"><label style="font-size:0.66rem">Label 2</label><input type="text" id="rslive-stat2-lbl" class="bio-input" value="Followers" oninput="updatePreview()"></div>
+                            <div class="form-group"><label style="font-size:0.66rem">Label 3</label><input type="text" id="rslive-stat3-lbl" class="bio-input" value="Uptime" oninput="updatePreview()"></div>
+                        </div>
+                        <h2 class="bio-h2" style="margin-top:6px;"><i class="fas fa-share-alt"></i> SOCIALS <span style="font-size:0.6rem;color:var(--text-muted);margin-left:auto">RS Live only</span></h2>
+                        <div class="form-group"><label>Twitter / X URL</label><input type="url" id="rslive-tw" class="bio-input" value="#" oninput="updatePreview()"></div>
+                        <div class="form-group"><label>Discord URL</label><input type="url" id="rslive-dc" class="bio-input" value="#" oninput="updatePreview()"></div>
+                        <div class="form-group"><label>YouTube URL</label><input type="url" id="rslive-yt" class="bio-input" value="#" oninput="updatePreview()"></div>
+                        <div class="form-group"><label>GitHub URL</label><input type="url" id="rslive-gh" class="bio-input" value="https://github.com/alsh3la" oninput="updatePreview()"></div>
+                        <div class="form-group"><label>Instagram URL</label><input type="url" id="rslive-ig" class="bio-input" value="#" oninput="updatePreview()"></div>
+                        <div class="form-group"><label>Telegram URL</label><input type="url" id="rslive-tg" class="bio-input" value="#" oninput="updatePreview()"></div>
+                        <div class="form-group"><label>Footer Copyright Text</label><input type="text" id="rslive-footer-txt" class="bio-input" value="© 2026 RS TWEAKS • Made with caffeine &amp; code" oninput="updatePreview()"></div>
+                    </div>
+
                     <h2 class="bio-h2"><i class="fas fa-link"></i> LINKS</h2>
                     <div id="links-container"></div>
                     <button class="btn btn-primary" style="width:100%" onclick="addNewLink()"><i class="fas fa-plus"></i> ADD LINK</button>
@@ -768,6 +843,7 @@
                         <select id="input-theme" class="bio-select" onchange="updatePreview()">
                             <option value="oled">OLED Default</option>
                             <option value="rstweak" selected>RS Tweak Theme</option>
+                            <option value="rs-live">⚡ RS Live (Full)</option>
                             <option value="solid">Solid Block</option>
                             <option value="outline">Tech Outline</option>
                             <option value="glow">Neon Glow</option>
@@ -1500,6 +1576,22 @@ function runKeyGen() {
         email: "M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
     };
 
+    // Renders icon for a link: supports both full <svg> markup and bare path `d` strings.
+    function buildIconSvg(link, defaultAttrs, injectClass) {
+        const cp = (link.customPath || '').trim();
+        if (link.isCustom && cp.startsWith('<svg')) {
+            // Full SVG supplied — use it directly, optionally injecting a CSS class.
+            return injectClass
+                ? cp.replace('<svg', `<svg class="${injectClass}"`)
+                : cp;
+        }
+        // Bare path d string (legacy behaviour).
+        let path = icons['web'];
+        if (link.isCustom && cp) path = cp;
+        else if (icons[link.icon]) path = icons[link.icon];
+        return `<svg ${defaultAttrs}><path d="${path}"/></svg>`;
+    }
+
     const rstweakColors = [
         { color: '#00fbff', glow: 'rgba(0, 251, 255, 0.4)' },
         { color: '#008cff', glow: 'rgba(0, 140, 255, 0.4)' },
@@ -1555,8 +1647,8 @@ function runKeyGen() {
                 <input type="url" class="bio-input" placeholder="URL" value="${escapeHtml(link.url)}" oninput="updateLink(${index}, 'url', this.value)">
                 <select class="bio-select" onchange="updateLinkIcon(${index}, this.value)">${iconOptions}<option value="custom" ${link.icon==='custom'?'selected':''}>CUSTOM SVG</option></select>
                 <div style="display:${link.icon==='custom'?'block':'none'}; margin-top:5px;">
-                    <label style="font-size:0.7rem; color:var(--text-muted);">SVG PATH DATA</label>
-                    <textarea class="bio-textarea" style="font-size:0.8rem; border-color:var(--primary);" placeholder="M12 2C6..." rows="2" oninput="updateLink(${index}, 'customPath', this.value)">${escapeHtml(link.customPath || '')}</textarea>
+                    <label style="font-size:0.7rem; color:var(--text-muted);">CUSTOM SVG — full &lt;svg&gt; markup or bare path d</label>
+                    <textarea class="bio-textarea" style="font-size:0.8rem; border-color:var(--primary);" placeholder="Paste full <svg …>…</svg>  — or just the path d value: M12 2C6…" rows="3" oninput="updateLink(${index}, 'customPath', this.value)">${escapeHtml(link.customPath || '')}</textarea>
                 </div>
             `;
             container.appendChild(div);
@@ -1580,10 +1672,17 @@ function runKeyGen() {
         const intensity = document.getElementById('input-intensity').value;
         const customCSS = document.getElementById('input-custom-css').value;
 
+        const handle = document.getElementById('input-handle').value;
+        const location = document.getElementById('input-location').value;
+
         document.getElementById('radius-val').innerText = radius + 'px';
         document.getElementById('spacing-val').innerText = spacing + 'px';
         document.getElementById('glow-val').innerText = intensity + '%';
         document.getElementById('color-val-display').innerText = color;
+
+        // Show/hide RS Live extras in the editor
+        const rsLiveExtrasEl = document.getElementById('rslive-extras');
+        if (rsLiveExtrasEl) rsLiveExtrasEl.style.display = (theme === 'rs-live') ? 'block' : 'none';
 
         const hexToRgba = (h, a) => { const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; };
         const content = document.getElementById('preview-content');
@@ -1596,20 +1695,130 @@ function runKeyGen() {
 
         const glowColor = hexToRgba(color, intensity / 200);
 
-        if (theme === 'rstweak') {
-            const linksHTML = linksData.map((link, index) => {
-                let path = icons['web'];
-                if (link.isCustom && link.customPath) path = link.customPath;
-                else if (icons[link.icon]) path = icons[link.icon];
+        if (theme === 'rs-live') {
+            // ── Read RS Live-specific fields ──
+            const s1v = document.getElementById('rslive-stat1-val').value;
+            const s2v = document.getElementById('rslive-stat2-val').value;
+            const s3v = document.getElementById('rslive-stat3-val').value;
+            const s1l = document.getElementById('rslive-stat1-lbl').value;
+            const s2l = document.getElementById('rslive-stat2-lbl').value;
+            const s3l = document.getElementById('rslive-stat3-lbl').value;
+            const tw  = document.getElementById('rslive-tw').value;
+            const dc  = document.getElementById('rslive-dc').value;
+            const yt  = document.getElementById('rslive-yt').value;
+            const gh  = document.getElementById('rslive-gh').value;
+            const ig  = document.getElementById('rslive-ig').value;
+            const tg  = document.getElementById('rslive-tg').value;
+            const footerTxt = document.getElementById('rslive-footer-txt').value;
 
+            // ── Link cards ──
+            const linksHTML = linksData.map((link, index) => {
+                const ci = index % rstweakColors.length;
+                const cc = rstweakColors[ci].color;
+                const cg = rstweakColors[ci].glow;
+                const featuredClass = index === 0 ? ' featured' : '';
+                const iconSvg = buildIconSvg(link,
+                    `viewBox="0 0 24 24" fill="none" stroke="${cc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`);
+                return `<a href="${link.url}" class="rslive-card${featuredClass}" style="--cc:${cc};--cg:${cg};border-radius:${radius}px;margin-bottom:${spacing}px;" target="_blank">
+                    <div class="rslive-icon-box">
+                        ${iconSvg}
+                    </div>
+                    <div class="rslive-link-body">
+                        <span class="rslive-link-title">${escapeHtml(link.title)}</span>
+                        <span class="rslive-link-desc">${escapeHtml(link.subtitle||'')}</span>
+                    </div>
+                    <div class="rslive-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                </a>`;
+            }).join('');
+
+            content.innerHTML = `
+                <style>
+                    .rslive-avatar { border-color: ${hexToRgba(color, 0.25)} !important; box-shadow: 0 0 40px ${hexToRgba(color, 0.15)}, 0 8px 32px rgba(0,0,0,0.6) !important; }
+                    .rslive-avatar:hover { box-shadow: 0 0 60px ${hexToRgba(color, 0.28)}, 0 12px 40px rgba(0,0,0,0.7) !important; }
+                    .rslive-handle { color: ${color} !important; }
+                    .rslive-footer-links a:hover { color: ${color} !important; }
+                    ${customCSS}
+                </style>
+                <div class="rslive-container">
+                    <div class="rslive-profile">
+                        <div class="rslive-avatar-wrap">
+                            <img src="${img}" class="rslive-avatar" alt="${escapeHtml(name)}">
+                            <div class="rslive-status-ring"></div>
+                        </div>
+                        <h1 class="rslive-name">${escapeHtml(name)}</h1>
+                        <p class="rslive-handle">${escapeHtml(handle)}</p>
+                        <p class="rslive-bio">${escapeHtml(bio).replace(/\n/g,'<br>')}</p>
+                        <div class="rslive-location">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span>${escapeHtml(location)}</span>
+                        </div>
+                    </div>
+
+                    <div class="rslive-social">
+                        <a href="${tw}" class="rslive-social-btn" style="--sc:#1da1f2;--sg:rgba(29,161,242,0.3);" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="color:#1da1f2;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="${dc}" class="rslive-social-btn" style="--sc:#5865f2;--sg:rgba(88,101,242,0.3);" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="color:#5865f2;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                        </a>
+                        <a href="${yt}" class="rslive-social-btn" style="--sc:#ff0000;--sg:rgba(255,0,0,0.3);" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="color:#ff0000;"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                        <a href="${gh}" class="rslive-social-btn" style="--sc:#333;--sg:rgba(255,255,255,0.15);" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="color:#fff;"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                        </a>
+                        <a href="${ig}" class="rslive-social-btn" style="--sc:#e4405f;--sg:rgba(228,64,95,0.3);" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        </a>
+                        <a href="${tg}" class="rslive-social-btn" style="--sc:#0088cc;--sg:rgba(0,136,204,0.3);" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="color:#0088cc;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </a>
+                    </div>
+
+                    <div class="rslive-divider"></div>
+
+                    <div class="rslive-stats">
+                        <div class="rslive-stat">
+                            <span class="rslive-stat-num">${escapeHtml(s1v)}</span>
+                            <span class="rslive-stat-lbl">${escapeHtml(s1l)}</span>
+                        </div>
+                        <div class="rslive-stat">
+                            <span class="rslive-stat-num">${escapeHtml(s2v)}</span>
+                            <span class="rslive-stat-lbl">${escapeHtml(s2l)}</span>
+                        </div>
+                        <div class="rslive-stat">
+                            <span class="rslive-stat-num">${escapeHtml(s3v)}</span>
+                            <span class="rslive-stat-lbl">${escapeHtml(s3l)}</span>
+                        </div>
+                    </div>
+
+                    <div class="rslive-divider"></div>
+
+                    <div class="rslive-links">${linksHTML}</div>
+
+                    <div class="rslive-footer">
+                        <div class="rslive-footer-links">
+                            <a href="${tw}">Twitter</a>
+                            <a href="${gh}">GitHub</a>
+                            <a href="${dc}">Discord</a>
+                            <a href="${tg}">Telegram</a>
+                        </div>
+                        <span>${escapeHtml(footerTxt)}</span>
+                    </div>
+                </div>`;
+        } else if (theme === 'rstweak') {
+            const linksHTML = linksData.map((link, index) => {
                 const colorIndex = index % rstweakColors.length;
                 const linkColor = rstweakColors[colorIndex].color;
                 const linkGlow = rstweakColors[colorIndex].glow;
+                const iconSvg = buildIconSvg(link, `viewBox="0 0 24 24" fill="${linkColor}"`);
 
                 return `
                 <a href="${link.url}" class="rstweak-link-item" style="--accent-color: ${linkColor}; --accent-glow: ${linkGlow}; border-radius: ${radius}px; margin-bottom: ${spacing}px;">
                     <div class="rstweak-link-icon">
-                        <svg viewBox="0 0 24 24" fill="${linkColor}"><path d="${path}"/></svg>
+                        ${iconSvg}
                     </div>
                     <div class="rstweak-link-content">
                         <span class="rstweak-link-title">${escapeHtml(link.title)}</span>
@@ -1643,10 +1852,10 @@ function runKeyGen() {
             if (theme === 'glass') btnCSS = `background: rgba(255,255,255,0.05); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);`;
 
             const linksHTML = linksData.map(link => {
-                let path = icons['web'];
-                if (link.isCustom && link.customPath) path = link.customPath;
-                else if (icons[link.icon]) path = icons[link.icon];
-                return `<a href="${link.url}" class="oled-link-item" target="_blank" style="${btnCSS} border-radius: ${radius}px; margin-bottom: ${spacing}px;"><svg class="oled-icon" viewBox="0 0 24 24" style="fill: ${theme==='outline' ? color : 'white'};"><path d="${path}"/></svg><span class="oled-link-text">${escapeHtml(link.title)}</span></a>`;
+                const iconSvg = buildIconSvg(link,
+                    `class="oled-icon" viewBox="0 0 24 24" style="fill: ${theme==='outline' ? color : 'white'};"`,
+                    'oled-icon');
+                return `<a href="${link.url}" class="oled-link-item" target="_blank" style="${btnCSS} border-radius: ${radius}px; margin-bottom: ${spacing}px;">${iconSvg}<span class="oled-link-text">${escapeHtml(link.title)}</span></a>`;
             }).join('');
 
             content.innerHTML = `
@@ -1686,7 +1895,244 @@ function runKeyGen() {
         const bgStyle = document.getElementById('preview-content').parentNode.style.cssText;
 
         let html = '';
-        if (theme === 'rstweak') {
+        if (theme === 'rs-live') {
+            // ── Gather all RS Live inputs ──
+            const img  = document.getElementById('input-img').value;
+            const bio  = document.getElementById('input-bio').value;
+            const handle   = document.getElementById('input-handle').value;
+            const location = document.getElementById('input-location').value;
+            const color    = document.getElementById('input-color').value;
+            const radius   = document.getElementById('input-radius').value;
+            const spacing  = document.getElementById('input-spacing').value;
+            const customCSS= document.getElementById('input-custom-css').value;
+            const s1v = document.getElementById('rslive-stat1-val').value;
+            const s2v = document.getElementById('rslive-stat2-val').value;
+            const s3v = document.getElementById('rslive-stat3-val').value;
+            const s1l = document.getElementById('rslive-stat1-lbl').value;
+            const s2l = document.getElementById('rslive-stat2-lbl').value;
+            const s3l = document.getElementById('rslive-stat3-lbl').value;
+            const tw  = document.getElementById('rslive-tw').value;
+            const dc  = document.getElementById('rslive-dc').value;
+            const yt  = document.getElementById('rslive-yt').value;
+            const gh  = document.getElementById('rslive-gh').value;
+            const ig  = document.getElementById('rslive-ig').value;
+            const tg  = document.getElementById('rslive-tg').value;
+            const footerTxt = document.getElementById('rslive-footer-txt').value;
+
+            const hexToRgba = (h, a) => { const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; };
+
+            const linksHTML = linksData.map((link, index) => {
+                let path = icons['web'];
+                if (link.isCustom && link.customPath) path = link.customPath;
+                else if (icons[link.icon]) path = icons[link.icon];
+                const ci = index % rstweakColors.length;
+                const cc = rstweakColors[ci].color;
+                const cg = rstweakColors[ci].glow;
+                const featuredClass = index === 0 ? ' featured-card' : '';
+                return `
+            <a href="${escapeJs(link.url)}" class="link-card${featuredClass}" style="--card-color:${cc};--card-glow:${cg};border-radius:${radius}px;margin-bottom:${spacing}px;" target="_blank">
+                <div class="link-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="${cc}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
+                </div>
+                <div class="link-body">
+                    <span class="link-title">${escapeHtml(link.title)}</span>
+                    <span class="link-desc">${escapeHtml(link.subtitle||'')}</span>
+                </div>
+                <div class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </a>`;
+            }).join('');
+
+            html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>${escapeHtml(name)}</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: ${color};
+            --primary-dim: ${hexToRgba(color, 0.15)};
+            --success: #00ffaa;
+            --surface: rgba(18, 18, 22, 0.75);
+            --surface-hover: rgba(28, 28, 36, 0.9);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.14);
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --text-dim: #666666;
+        }
+        html, body { scrollbar-width: none; -ms-overflow-style: none; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+        body {
+            background: #000;
+            ${bgStyle}
+            color: #fff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 18px 40px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -30%; left: -30%;
+            width: 160%; height: 160%;
+            background: radial-gradient(circle at 20% 0%, ${hexToRgba(color, 0.04)} 0%, transparent 45%),
+                        radial-gradient(circle at 80% 100%, rgba(170,0,255,0.03) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bio-container {
+            width: 100%; max-width: 480px;
+            display: flex; flex-direction: column; gap: 18px;
+            position: relative; z-index: 1;
+        }
+        /* Profile */
+        .profile-section { text-align: center; display: flex; flex-direction: column; align-items: center; animation: fadeInDown 0.9s cubic-bezier(0.22,1,0.36,1); }
+        .profile-avatar-wrapper { position: relative; margin-bottom: 18px; }
+        .profile-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2.5px solid ${hexToRgba(color, 0.25)}; box-shadow: 0 0 40px ${hexToRgba(color, 0.15)}, 0 8px 32px rgba(0,0,0,0.6); transition: all 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .profile-avatar:hover { transform: scale(1.06) rotate(2deg); box-shadow: 0 0 60px ${hexToRgba(color, 0.25)}, 0 12px 40px rgba(0,0,0,0.7); }
+        .profile-status-ring { position: absolute; bottom: 4px; right: 4px; width: 22px; height: 22px; background: #00ffaa; border-radius: 50%; border: 3px solid #000; box-shadow: 0 0 10px rgba(0,255,170,0.4); animation: pulse 2s infinite; }
+        .profile-name { font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 800; color: #fff; letter-spacing: -1.5px; margin-bottom: 6px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .profile-handle { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: ${color}; margin-bottom: 10px; font-weight: 500; }
+        .profile-bio { color: #a0a0a0; font-size: 0.88rem; line-height: 1.5; max-width: 320px; }
+        .profile-location { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 0.75rem; color: #666; background: rgba(255,255,255,0.03); padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.06); }
+        .profile-location svg { width: 12px; height: 12px; }
+        /* Social */
+        .social-bar { display: flex; justify-content: center; gap: 10px; margin: 4px 0 8px; animation: fadeInUp 0.6s 0.3s both; }
+        .social-btn { width: 44px; height: 44px; border-radius: 14px; background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; }
+        .social-btn::before { content: ''; position: absolute; inset: 0; background: var(--social-color); opacity: 0; transition: opacity 0.3s; }
+        .social-btn:hover { transform: translateY(-4px) scale(1.08); border-color: var(--social-color); box-shadow: 0 8px 20px -4px var(--social-glow); }
+        .social-btn:hover::before { opacity: 0.1; }
+        .social-btn svg { width: 20px; height: 20px; position: relative; z-index: 1; transition: transform 0.3s; }
+        .social-btn:hover svg { transform: scale(1.1); }
+        /* Divider */
+        .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); margin: 6px 0; }
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 4px 0; animation: fadeInUp 0.6s 0.5s both; }
+        .stat-pill { background: var(--surface); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 14px; padding: 14px 8px; text-align: center; transition: all 0.3s; }
+        .stat-pill:hover { background: var(--surface-hover); border-color: var(--border-hover); transform: translateY(-2px); }
+        .stat-number { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: #fff; display: block; margin-bottom: 3px; }
+        .stat-label { font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+        /* Link Cards */
+        .links-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .link-card { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: var(--surface); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: ${radius}px; text-decoration: none; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; opacity: 0; animation: slideInUp 0.55s forwards; }
+        .link-card::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, var(--card-color,${color}) 0%, transparent 60%); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+        .link-card:hover { transform: translateY(-3px) scale(1.01); background: var(--surface-hover); border-color: var(--card-color,${color}); box-shadow: 0 12px 32px -8px var(--card-glow,${hexToRgba(color,0.25)}); }
+        .link-card:hover::after { opacity: 0.04; }
+        .link-icon-box { width: 42px; height: 42px; min-width: 42px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; position: relative; z-index: 1; }
+        .link-card:hover .link-icon-box { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); transform: scale(1.05); }
+        .link-icon-box svg { width: 22px; height: 22px; }
+        .link-body { flex: 1; display: flex; flex-direction: column; gap: 2px; position: relative; z-index: 1; }
+        .link-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.92rem; color: #fff; letter-spacing: -0.2px; }
+        .link-desc { font-size: 0.76rem; color: #666; }
+        .link-arrow { width: 20px; height: 20px; min-width: 20px; opacity: 0; transform: translateX(-8px); transition: all 0.3s; color: #666; position: relative; z-index: 1; }
+        .link-card:hover .link-arrow { opacity: 0.6; transform: translateX(0); color: var(--card-color,${color}); }
+        .featured-card { background: linear-gradient(135deg, ${hexToRgba(color,0.06)}, rgba(170,0,255,0.06)); border: 1px solid ${hexToRgba(color,0.15)}; }
+        .featured-card::before { content: 'FEATURED'; position: absolute; top: 8px; right: -28px; background: ${color}; color: #000; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; font-weight: 800; padding: 3px 30px; transform: rotate(35deg); letter-spacing: 1px; }
+        .featured-card:hover { border-color: ${hexToRgba(color,0.3)}; box-shadow: 0 12px 40px -8px ${hexToRgba(color,0.2)}; }
+        /* Footer */
+        .bio-footer { margin-top: 35px; text-align: center; font-size: 0.7rem; color: #3a3a3a; font-family: 'JetBrains Mono', monospace; animation: fadeIn 1s 1s both; display: flex; flex-direction: column; gap: 8px; }
+        .footer-socials { display: flex; justify-content: center; gap: 16px; }
+        .footer-socials a { color: #444; text-decoration: none; transition: color 0.3s; font-size: 0.7rem; }
+        .footer-socials a:hover { color: ${color}; }
+        /* Animations */
+        .link-card:nth-child(1){animation-delay:0.15s} .link-card:nth-child(2){animation-delay:0.23s} .link-card:nth-child(3){animation-delay:0.31s} .link-card:nth-child(4){animation-delay:0.39s} .link-card:nth-child(5){animation-delay:0.47s} .link-card:nth-child(6){animation-delay:0.55s} .link-card:nth-child(7){animation-delay:0.63s} .link-card:nth-child(8){animation-delay:0.71s}
+        @keyframes slideInUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeInDown { from{opacity:0;transform:translateY(-25px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,255,170,0.4)} 50%{box-shadow:0 0 0 6px rgba(0,255,170,0)} }
+        @media (min-width:768px) {
+            .bio-container { background: rgba(8,8,12,0.55); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.02); padding: 55px 45px 45px; }
+            body { padding: 60px 20px; }
+        }
+        ${customCSS}
+    </style>
+</head>
+<body>
+    <div class="bio-container">
+        <div class="profile-section">
+            <div class="profile-avatar-wrapper">
+                <img src="${escapeHtml(img)}" class="profile-avatar" alt="${escapeHtml(name)}">
+                <div class="profile-status-ring"></div>
+            </div>
+            <h1 class="profile-name">${escapeHtml(name)}</h1>
+            <p class="profile-handle">${escapeHtml(handle)}</p>
+            <p class="profile-bio">${escapeHtml(bio).replace(/\n/g,'<br>')}</p>
+            <div class="profile-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>${escapeHtml(location)}</span>
+            </div>
+        </div>
+
+        <div class="social-bar">
+            <a href="${escapeHtml(tw)}" class="social-btn" style="--social-color:#1da1f2;--social-glow:rgba(29,161,242,0.3);" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="color:#1da1f2;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="${escapeHtml(dc)}" class="social-btn" style="--social-color:#5865f2;--social-glow:rgba(88,101,242,0.3);" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="color:#5865f2;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
+            <a href="${escapeHtml(yt)}" class="social-btn" style="--social-color:#ff0000;--social-glow:rgba(255,0,0,0.3);" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="color:#ff0000;"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="${escapeHtml(gh)}" class="social-btn" style="--social-color:#333;--social-glow:rgba(255,255,255,0.15);" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="color:#fff;"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            </a>
+            <a href="${escapeHtml(ig)}" class="social-btn" style="--social-color:#e4405f;--social-glow:rgba(228,64,95,0.3);" target="_blank">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e4405f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="${escapeHtml(tg)}" class="social-btn" style="--social-color:#0088cc;--social-glow:rgba(0,136,204,0.3);" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="color:#0088cc;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="stats-row">
+            <div class="stat-pill">
+                <span class="stat-number">${escapeHtml(s1v)}</span>
+                <span class="stat-label">${escapeHtml(s1l)}</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number">${escapeHtml(s2v)}</span>
+                <span class="stat-label">${escapeHtml(s2l)}</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number">${escapeHtml(s3v)}</span>
+                <span class="stat-label">${escapeHtml(s3l)}</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="links-grid">
+            ${linksHTML}
+        </div>
+
+        <div class="bio-footer">
+            <div class="footer-socials">
+                <a href="${escapeHtml(tw)}">Twitter</a>
+                <a href="${escapeHtml(gh)}">GitHub</a>
+                <a href="${escapeHtml(dc)}">Discord</a>
+                <a href="${escapeHtml(tg)}">Telegram</a>
+            </div>
+            <span>${escapeHtml(footerTxt)}</span>
+        </div>
+    </div>
+</body>
+</html>`;
+        } else if (theme === 'rstweak') {
             html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1761,8 +2207,23 @@ function runKeyGen() {
 
     function saveJSON() {
         const state = {
-            profile: { name: document.getElementById('input-name').value, img: document.getElementById('input-img').value, bio: document.getElementById('input-bio').value, color: document.getElementById('input-color').value },
+            profile: { name: document.getElementById('input-name').value, img: document.getElementById('input-img').value, bio: document.getElementById('input-bio').value, color: document.getElementById('input-color').value, handle: document.getElementById('input-handle').value, location: document.getElementById('input-location').value },
             settings: { theme: document.getElementById('input-theme').value, bgType: document.getElementById('input-bg-type').value, radius: document.getElementById('input-radius').value, spacing: document.getElementById('input-spacing').value, intensity: document.getElementById('input-intensity').value, customCSS: document.getElementById('input-custom-css').value },
+            rslive: {
+                stat1val: document.getElementById('rslive-stat1-val').value,
+                stat2val: document.getElementById('rslive-stat2-val').value,
+                stat3val: document.getElementById('rslive-stat3-val').value,
+                stat1lbl: document.getElementById('rslive-stat1-lbl').value,
+                stat2lbl: document.getElementById('rslive-stat2-lbl').value,
+                stat3lbl: document.getElementById('rslive-stat3-lbl').value,
+                tw: document.getElementById('rslive-tw').value,
+                dc: document.getElementById('rslive-dc').value,
+                yt: document.getElementById('rslive-yt').value,
+                gh: document.getElementById('rslive-gh').value,
+                ig: document.getElementById('rslive-ig').value,
+                tg: document.getElementById('rslive-tg').value,
+                footerTxt: document.getElementById('rslive-footer-txt').value
+            },
             links: linksData
         };
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'})); a.download = 'rs-profile.json'; a.click();
@@ -1786,6 +2247,14 @@ function runKeyGen() {
                 document.getElementById('input-spacing').value = d.settings.spacing;
                 document.getElementById('input-intensity').value = d.settings.intensity || 70;
                 document.getElementById('input-custom-css').value = d.settings.customCSS || '';
+                if (d.profile && d.profile.handle) document.getElementById('input-handle').value = d.profile.handle;
+                if (d.profile && d.profile.location) document.getElementById('input-location').value = d.profile.location;
+                if (d.rslive) {
+                    ['stat1val','stat2val','stat3val','stat1lbl','stat2lbl','stat3lbl','tw','dc','yt','gh','ig','tg','footerTxt'].forEach(k => {
+                        const el = document.getElementById('rslive-' + k.replace(/([A-Z])/g,'-$1').toLowerCase());
+                        if (el && d.rslive[k] !== undefined) el.value = d.rslive[k];
+                    });
+                }
                 linksData = d.links;
                 renderEditorLinks(); updatePreview(); showToast("Project Loaded!");
             } catch(err) { showToast("Error loading file", "error"); }
